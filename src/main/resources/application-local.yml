@@ -1,0 +1,62 @@
+spring:
+  h2:
+    console:
+      enabled: true
+    path: /h2-console
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 10
+        show_sql: false
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+  main:
+    allow-bean-definition-overriding: true
+
+logging:
+  level:
+    org:
+      springframework:
+        transaction:
+          interceptor: TRACE
+        jdbc:
+          datasource:
+            DataSourceTransactionManager: DEBUG
+        orm:
+          jpa:
+            JpaTransactionManager: DEBUG
+      hibernate:
+        type:
+          descriptor:
+            sql: TRACE
+        resource:
+          transaction: DEBUG
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+
+jwt:
+  secret-key: 'sebure-key'
+  access-token-expire-length: 5000
+  refresh-token-expire-length: 2592000000
+  header-name: 'sebure_bearer'
+
