@@ -1,90 +1,125 @@
 package hanu.exam.springtestexam.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.xml.bind.DatatypeConverter;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public final class JwtProvider {
+public class JwtProvider {
 
-    private final UserDetailsService userDetailsService;
-
-    // secret key
     @Value("${jwt.secret-key}")
-    private String secretKey;
+    private String SECRET_KEY;
 
-    // access token 유효시간 TODO: 분리할것
-    private final long accessTokenValidTime = 2 * 60 * 60 * 1000L;
+    @Value("${jwt.access-token-expire-length}")
+    private long ACCESS_VALIDITY_IN_MILLISECONDS;
 
-    // refresh token 유효시간 TODO: 분리할것
-    private final long refreshTokenValidTime = 2 * 7 * 24 * 60 * 60 * 1000L;
+    @Value("${jwt.refresh-token-expire-length}")
+    private long REFRESH_VALIDITY_IN_MILLISECONDS;
+
+//    @Value("${jwt.header-name}")
+//    private String HEADER_NAME;
+
 
     @PostConstruct
-    private void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+    protected void init() {
+        SECRET_KEY = Base64.getEncoder().encodeToString(SECRET_KEY.getBytes());
     }
 
-    /**
-     * 토큰에서 Claim 추출
-     */
-    private Claims getClaimsFormToken(String token) {
-        return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey)).parseClaimsJws(token).getBody();
+    public String createAccessToken(String username, List<String> roles, String issuer){
+        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
+        return JWT.create()
+                .withSubject(username)
+                .withIssuedAt(new Date(System.currentTimeMillis()))
+                .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_VALIDITY_IN_MILLISECONDS))
+                .withIssuer(issuer)
+//                .withClaim("roles", roles)  // 권한은 현재 없음
+                .sign(algorithm);
     }
 
-    /**
-     * 토큰에서 인증 subject 추출
-     */
-    private String getSubject(String token) {
-        return getClaimsFormToken(token).getSubject();
+    public String createRefreshToken(String username, String issuer){
+        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
+        return JWT.create()
+                .withSubject(username)
+                .withIssuedAt(new Date(System.currentTimeMillis()))
+                .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_VALIDITY_IN_MILLISECONDS))
+                .withIssuer(issuer)
+                .sign(algorithm);
     }
 
-    /**
-     * 토큰에서 인증 정보 추출
-     */
-    public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getSubject(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
+    public String validateToken(String token) {
 
-    /**
-     * 토큰 발급
-     */
-    public String generateJwtToken(Authentication authentication) {
-        Claims claims = Jwts.claims().setSubject(String.valueOf(authentication.getPrincipal()));
-        claims.put("roles", authentication.getAuthorities());
-        Date now = new Date();
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + accessTokenValidTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
-                .compact();
-    }
-
-    /**
-     * 토큰 검증
-     */
-    public boolean isValidToken(String token) {
-        try {
-            Claims claims = getClaimsFormToken(token);
-            return !claims.getExpiration().before(new Date());
-        } catch (JwtException | NullPointerException exception) {
-            return false;
+        if(StringUtils.isEmpty(token)){
+            throw new JWTVerificationException("액세스 토큰이 존재하지 않습니다.");
         }
+
+        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
+        JWTVerifier verifier = JWT.require(algorithm).build();
+        DecodedJWT decodedJWT = verifier.verify(token);
+        String username = decodedJWT.getSubject();
+//        String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+        return username;
     }
+
+//    public String getRefreshTokenIdTokenFromAccessToken(String token){
+//        DecodedJWT decodedJWT = JWT.decode(token);
+//        return decodedJWT.getClaim("refresh_token_id").toString();
+//    }
+
+    /**
+     * 액세스 토큰만 쿠키로 저장하고, 리프레쉬 토큰은 DB에 저장한다.
+     */
+//    public HttpServletResponse createCookie(HttpServletResponse response, String token) {
+//        // TODO : https 적용시 secure 적용 필요
+//        ResponseCookie cookie = ResponseCookie.from(HEADER_NAME, token)
+//                .httpOnly(true)
+//                .sameSite("lax")
+//                .maxAge(ACCESS_VALIDITY_IN_MILLISECONDS)
+//                .path("/")
+//                .build();
+//        response.addHeader("Set-Cookie", cookie.toString());
+//        return response;
+//    }
+//
+//    public HttpServletResponse deleteCookie(HttpServletResponse response) {
+//        // TODO : https 적용시 secure 적용 필요
+//        ResponseCookie cookie = ResponseCookie.from(HEADER_NAME, null)
+//                .httpOnly(true)
+//                .sameSite("lax")
+//                .maxAge(0)
+//                .path("/")
+//                .build();
+//        response.addHeader("Set-Cookie", cookie.toString());
+//        return response;
+//    }
+
+//    public String resolveCookie(HttpServletRequest request) {
+//        final Cookie[] cookies = request.getCookies();
+//        if (cookies == null) return null;
+//        for (Cookie cookie : cookies) {
+//            if (cookie.getName().equals(HEADER_NAME)) {
+//                return cookie.getValue();
+//            }
+//        }
+//        return null;
+//    }
+
+//    @Transactional
+//    public RefreshToken saveRefreshToken(String refreshToken) {
+//        return refreshTokenRepo.save(RefreshToken.builder().token(refreshToken).build());
+//    }
 
 }

@@ -15,6 +15,7 @@ public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHa
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
+        //TODO: 아이디, 패스워드를 다시 확인하라는 메시지 추가
         ApiResponse.error(response, ApiResponseType.UNAUTHORIZED_RESPONSE);
     }
 

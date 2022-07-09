@@ -1,16 +1,13 @@
 package hanu.exam.springtestexam.security;
 
-import hanu.exam.springtestexam.security.filter.CustomAuthenticationFilter;
-import hanu.exam.springtestexam.security.jwt.JwtFilter;
+import hanu.exam.springtestexam.security.filter.CustomAuthorizationFilter;
 import hanu.exam.springtestexam.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,9 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static hanu.exam.springtestexam.security.MyCustomDsl.customDsl;
+import static hanu.exam.springtestexam.security.AuthCustomDsl.customDsl;
 
 
 @Configuration
@@ -50,27 +46,29 @@ public class WebSecurityConfig {
     /**
      * Security ignore 엔드포인트
      */
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().antMatchers("/h2-console/**");
+    }
+
 //    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer() {
-//        return (web) -> web.ignoring().antMatchers("/api/signup", "/api/signin");
+//    public CustomAuthorizationFilter jwtFilter() {
+//        return new CustomAuthorizationFilter(jwtProvider);
 //    }
 
     @Bean
-    public JwtFilter jwtFilter() {
-        return new JwtFilter(jwtProvider);
-    }
-
-    @Bean
-    @Order(1)
+//    @Order(1)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         final String[] GET_WHITELIST = new String[]{
-                "/login" // 로그인
+//                "/login" // 로그인
         };
 
         final String[] POST_WHITELIST = new String[]{
-                "/user" // 회원가입
+//                "/user" // 회원가입
+                "/login"
         };
+
 
         http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 off
@@ -81,12 +79,12 @@ public class WebSecurityConfig {
                 .and().authorizeRequests()
                 .antMatchers(HttpMethod.GET, GET_WHITELIST).permitAll() // 해당 GET URL은 모두 허용
                 .antMatchers(HttpMethod.POST, POST_WHITELIST).permitAll() // 해당 POST URL은 모두 허용
-                .antMatchers("**").hasAnyRole("USER") // 권한 적용
+//                .antMatchers("**").hasAnyRole("USER") // 권한 적용
                 .anyRequest().authenticated() // 나머지 요청에 대해서는 인증을 요구
                 .and()
                 .formLogin().disable() // 로그인 페이지 사용 안함
 //                .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class) // 인증필터
-                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)  // jwt 인증필터
+//                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)  // jwt 인증필터
                 .apply(customDsl(authenticationSuccessHandler, authenticationFailureHandler))
         ;
 

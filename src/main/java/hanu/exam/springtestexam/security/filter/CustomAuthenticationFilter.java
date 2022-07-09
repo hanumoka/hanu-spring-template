@@ -1,8 +1,8 @@
 package hanu.exam.springtestexam.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hanu.exam.springtestexam.security.dto.LoginDTO;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -20,22 +21,26 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        final UsernamePasswordAuthenticationToken authRequest;
+        if (!request.getMethod().equalsIgnoreCase("POST")) {
+            throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
+        }
 
-        final LoginDTO loginDTO;
+        String username;
+        String password;
         try {
-            // 사용자 요청 정보로 UserPasswordAuthenticationToken 발급
-            loginDTO = new ObjectMapper().readValue(request.getInputStream(), LoginDTO.class);
-            System.out.println("loginDTO : " + loginDTO);
-            authRequest = new UsernamePasswordAuthenticationToken(loginDTO.getLoginid(), loginDTO.getPassword());
+            Map requestMap = new ObjectMapper().readValue(request.getInputStream(), Map.class);
+            username = requestMap.get("username").toString();
+            password = requestMap.get("password").toString();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("Token 발급 실패");
+            throw new AuthenticationServiceException(e.getMessage(), e);
         }
-        setDetails(request, authRequest);
 
-        // AuthenticationManager에게 전달 -> AuthenticationProvider의 인증 메서드 실행
-        return this.getAuthenticationManager().authenticate(authRequest);
+        System.out.println("username = " + username);
+        System.out.println("password = " + password);
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+        return this.getAuthenticationManager().authenticate(authenticationToken);
     }
 
 }

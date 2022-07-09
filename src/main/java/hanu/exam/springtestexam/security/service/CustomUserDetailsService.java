@@ -34,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 () -> new UsernameNotFoundException("UsernameNotFoundException"));
 
         List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new SimpleGrantedAuthority(account.getRole()));
+//        roles.add(new SimpleGrantedAuthority(account.getRole()));  // 권한은 없으니 주석처리
 
         // AccountContext -> User -> UserDetails 구현체
         AccountContext accountContext = new AccountContext(opAccount.get(), roles);

@@ -9,7 +9,9 @@ import org.springframework.http.MediaType;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Getter
@@ -45,13 +47,19 @@ public class ApiResponse {
         httpServletResponse.getWriter().write(Objects.requireNonNull(objectMapper.writeValueAsString(ApiResponse.error(apiResponseType))));
     }
 
-    public static void token(ServletResponse response, String token) throws IOException {
+    public static void token(ServletResponse response, String accessToken, String refreshToken) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setStatus(ApiResponseType.SUCCESS.getCode());
-        httpServletResponse.getWriter().write(Objects.requireNonNull(objectMapper.writeValueAsString(new DataApiResponse<String>(token))));
+        Map<String, String> tokenMap = new HashMap<>();
+        tokenMap.put("accessToken", accessToken);
+        tokenMap.put("refreshToken", refreshToken);
+        httpServletResponse.getWriter()
+                .write(Objects.requireNonNull(
+                        objectMapper.writeValueAsString(new DataApiResponse<Map<String, String>>(tokenMap)
+                        )));
     }
 
     @Getter

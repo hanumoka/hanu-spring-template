@@ -12,6 +12,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+/**
+ * AuthenticationFilter에 의해 로그인 인증을 시도하는 주체
+ */
 @Component
 @RequiredArgsConstructor
 public class AuthenticationProviderImpl implements AuthenticationProvider {
@@ -39,10 +42,11 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         }
 
         // 패스워드 말고도 필요한 검증을 이곳에서 처리하면 된다.
+        // ex. 계정 lock, 비밀번호 만료 등등...
 
         //검증이 성공한 검증정보를 authenticationManager에게 다시 리턴한다.
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(accountContext.getAccount(),
+                new UsernamePasswordAuthenticationToken(accountContext.getAccount().getUsername(),
                         null, accountContext.getAuthorities());
 
         return authenticationToken;
