@@ -1,7 +1,7 @@
 package hanu.exam.springtestexam.security.service;
 
-import hanu.exam.springtestexam.domain.Account;
-import hanu.exam.springtestexam.repository.AccountRepository;
+import hanu.exam.springtestexam.domain.account.entity.Account;
+import hanu.exam.springtestexam.domain.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

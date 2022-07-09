@@ -1,4 +1,4 @@
-package hanu.exam.springtestexam.domain;
+package hanu.exam.springtestexam.domain.account.entity;
 
 import lombok.*;
 

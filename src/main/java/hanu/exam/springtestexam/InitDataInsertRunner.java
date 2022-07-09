@@ -1,7 +1,8 @@
 package hanu.exam.springtestexam;
 
-import hanu.exam.springtestexam.domain.Account;
-import hanu.exam.springtestexam.service.AccountService;
+import hanu.exam.springtestexam.domain.account.dto.UserJoinDTO;
+import hanu.exam.springtestexam.domain.account.entity.Account;
+import hanu.exam.springtestexam.domain.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,11 +21,7 @@ public class InitDataInsertRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // 서버 시작시 기초 권한과 계정을 db에 저장
 
-        Account account = Account.builder()
-                .username("test1")
-                .password(passwordEncoder.encode("1234"))
-                .build();
-
-        accountService.createAccount(account);
+        UserJoinDTO userJoinDTO1 = new UserJoinDTO("test1", "1234","test@test.com", "kyb");
+        accountService.join(userJoinDTO1);
     }
 }
