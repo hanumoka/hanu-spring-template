@@ -20,7 +20,10 @@ public class AccountController {
 
     // 1.accesstoken을 기용하여 자신의 정보 조회
 
-    // 2.만료된 accesstoken 인경우 토큰 재발행
+    // 2.만료된 accesstoken 인경우 토큰 재발행 (프론트엔드로 부터 refresh token을 받아서)
+
+
+    //------------ TODO: 아래는 토큰 고도화 내용 나중에 하자.
 
     // 3.리프레시토큰의 경우 httponly, secure(나중) 쿠키로 업그레이드
 
@@ -30,7 +33,6 @@ public class AccountController {
     //  - 레디스에 저장한다.
     //  -- active accesstoken = 키(accesstoken) : 값(refreshtoken) 발급한 토큰 저장(자동으로 만료된 토큰은 삭제)
     //  -- active refreshtoken = 키(refreshtoken) :  발급한 리프리시토큰 저장(자동으로 만료된 토큰은 삭제)
-    //  --
 
 
 //    @GetMapping(name = "회원 정보조회", value = "/user/{id}")
