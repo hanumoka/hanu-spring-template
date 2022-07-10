@@ -56,7 +56,7 @@ decorator:
 
 jwt:
   secret-key: 'sebure-key'
-  access-token-expire-length: 5000
+  access-token-expire-length: 5000000
   refresh-token-expire-length: 2592000000
   header-name: 'sebure_bearer'
 
