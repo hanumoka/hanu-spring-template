@@ -66,6 +66,7 @@ public class WebSecurityConfig {
 
         final String[] POST_WHITELIST = new String[]{
 //                "/user" // 회원가입
+                "/signup",
                 "/login"
         };
 

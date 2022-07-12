@@ -4,15 +4,17 @@ import hanu.exam.springtestexam.common.ApiResponse;
 import hanu.exam.springtestexam.domain.account.dto.UserJoinDTO;
 import hanu.exam.springtestexam.domain.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class AccountController {
 
     private final AccountService accountService;
 
-    @PostMapping(name = "회원가입", value = "/user")
+    @PostMapping(name = "회원가입", value = "/signup")
     public ApiResponse join(@RequestBody UserJoinDTO userJoinDTO) {
         accountService.join(userJoinDTO);
         return new ApiResponse();
