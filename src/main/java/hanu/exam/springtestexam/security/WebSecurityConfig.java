@@ -3,6 +3,7 @@ package hanu.exam.springtestexam.security;
 import hanu.exam.springtestexam.security.filter.CustomAuthorizationFilter;
 import hanu.exam.springtestexam.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static hanu.exam.springtestexam.security.AuthCustomDsl.customDsl;
 
@@ -24,6 +26,12 @@ import static hanu.exam.springtestexam.security.AuthCustomDsl.customDsl;
 //@EnableWebSecurity , WebSecurityConfigurerAdapter가 derecated 되어 더이상 필요 없을듯 하다.
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+
+    @Value("${jwt.authorization-header}")
+    private String AUTHORIZATION_HEADER;
+    @Value("${jwt.header-name}")
+    private String HEADER_NAME;
+
 
     // JWT 제공 클래스
     private final JwtProvider jwtProvider;
@@ -51,10 +59,10 @@ public class WebSecurityConfig {
         return (web) -> web.ignoring().antMatchers("/h2-console/**");
     }
 
-//    @Bean
-//    public CustomAuthorizationFilter jwtFilter() {
-//        return new CustomAuthorizationFilter(jwtProvider);
-//    }
+    @Bean
+    public CustomAuthorizationFilter jwtFilter() {
+        return new CustomAuthorizationFilter(AUTHORIZATION_HEADER, HEADER_NAME, jwtProvider);
+    }
 
     @Bean
 //    @Order(1)
@@ -85,7 +93,7 @@ public class WebSecurityConfig {
                 .and()
                 .formLogin().disable() // 로그인 페이지 사용 안함
 //                .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class) // 인증필터
-//                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)  // jwt 인증필터
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)  // jwt 인증필터
                 .apply(customDsl(authenticationSuccessHandler, authenticationFailureHandler))
         ;
 

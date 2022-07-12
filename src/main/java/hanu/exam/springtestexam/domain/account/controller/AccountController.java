@@ -20,7 +20,14 @@ public class AccountController {
         return new ApiResponse();
     }
 
+    // 로그인은 security에서 필터로처리
+
     // 1.accesstoken을 기용하여 자신의 정보 조회
+    @GetMapping(name="사용자가 자신의 정보 조회", value ="/account")
+    public ApiResponse getMyAccountInfo(){
+        log.info("getMyAccountInfo...");
+        return new ApiResponse();
+    }
 
     // 2.만료된 accesstoken 인경우 토큰 재발행 (프론트엔드로 부터 refresh token을 받아서)
 

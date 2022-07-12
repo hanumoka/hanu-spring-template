@@ -16,8 +16,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String BEARER_PREFIX = "Bearer ";
+    private final String AUTHORIZATION_HEADER;
+    private final String BEARER_PREFIX;
     private final JwtProvider jwtProvider;
 
     /**
@@ -28,17 +28,22 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
         // Request Header에서 토큰 추출
         String jwt = resolveToken(request);
-        System.out.println("jwt : " + jwt);
-//        // Token 유효성 검사
-//        if (StringUtils.hasText(jwt) && jwtProvider.isValidToken(jwt)) {
-//            System.out.println("jwt 통과");
-//            // 토큰으로 인증 정보를 추출
+        // AccessToken 유효성 검사
+        if (StringUtils.hasText(jwt)) {
+
+            //토큰의 유효성 검사
+            String username = jwtProvider.validateToken(jwt);
+            System.out.println("token username:" + username);
+
+            // 유효한 토큰인 경우 사용자 정보 및 권한(현재없음)을 조회하여 securityContext에 정보를 저장한다.
+
+            // 토큰으로 인증 정보를 추출
 //            Authentication authentication = jwtProvider.getAuthentication(jwt);
-//            // SecurityContext에 저장
+            // SecurityContext에 저장
 //            SecurityContextHolder.getContext().setAuthentication(authentication);
 //        } else {
-//            System.out.println("jwt 실패");
-//        }
+            System.out.println("jwt 실패");
+        }
 
         filterChain.doFilter(request, response);
     }
