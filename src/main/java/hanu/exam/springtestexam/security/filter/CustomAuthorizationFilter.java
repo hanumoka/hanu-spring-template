@@ -32,7 +32,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(jwt)) {
 
             //토큰의 유효성 검사
-            String username = jwtProvider.validateToken(jwt);
+            String username = jwtProvider.validateToken(jwt);  // TODO: header의 accesstoken 검증시 예외처리 (에외처리 전략 추가 필요)
             System.out.println("token username:" + username);
 
             // 유효한 토큰인 경우 사용자 정보 및 권한(현재없음)을 조회하여 securityContext에 정보를 저장한다.
