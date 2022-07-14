@@ -39,21 +39,23 @@ public class JwtProvider {
         SECRET_KEY = Base64.getEncoder().encodeToString(SECRET_KEY.getBytes());
     }
 
-    public String createAccessToken(String username, List<String> roles, String issuer){
+    public String createAccessToken(Long userId, String username, List<String> roles, String issuer){
         Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
         return JWT.create()
-                .withSubject(username)
+                .withSubject(String.valueOf(userId))
+
                 .withIssuedAt(new Date(System.currentTimeMillis()))
                 .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_VALIDITY_IN_MILLISECONDS))
                 .withIssuer(issuer)
+                .withClaim("username", username)
 //                .withClaim("roles", roles)  // 권한은 현재 없음
                 .sign(algorithm);
     }
 
-    public String createRefreshToken(String username, String issuer){
+    public String createRefreshToken(Long userId, String username, String issuer){
         Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
         return JWT.create()
-                .withSubject(username)
+                .withSubject(String.valueOf(userId))
                 .withIssuedAt(new Date(System.currentTimeMillis()))
                 .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_VALIDITY_IN_MILLISECONDS))
                 .withIssuer(issuer)
@@ -69,9 +71,8 @@ public class JwtProvider {
         Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT decodedJWT = verifier.verify(token);
-        String username = decodedJWT.getSubject();
-//        String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
-        return username;
+        //        String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+        return decodedJWT.getSubject();
     }
 
 //    public String getRefreshTokenIdTokenFromAccessToken(String token){

@@ -4,6 +4,10 @@ server:
 spring:
   profiles:
     default: local
-  outout:
+  output:
     ansi:
-      enavled: always
+      enabled: always
+
+hanu:
+  service:
+    name: hanu-spring-template

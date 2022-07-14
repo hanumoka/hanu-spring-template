@@ -1,11 +1,12 @@
 package hanu.exam.springtestexam.security;
 
+import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
+@Getter
 public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 
     private String username;
@@ -13,8 +14,9 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 
     public CustomAuthenticationToken(Long userId, String username, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
-        this.username = username;
         this.userId = userId;
+        this.username = username;
+
     }
 
     /**
@@ -34,6 +36,6 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getPrincipal() {
-        return null;
+        return this.userId;
     }
 }
