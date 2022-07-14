@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,8 @@ import java.io.IOException;
 public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
+
+    private final UserDetailsService userDetailsService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -39,6 +42,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         // Response
         System.out.println("accessToken username:" + jwtProvider.validateToken(accessToken));
         System.out.println("refreshToken username:" + jwtProvider.validateToken(refreshToken));
+
         ApiResponse.token(response, accessToken, refreshToken);
     }
 

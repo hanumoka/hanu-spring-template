@@ -45,11 +45,10 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         // ex. 계정 lock, 비밀번호 만료 등등...
 
         //검증이 성공한 검증정보를 authenticationManager에게 다시 리턴한다.
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(accountContext.getAccount().getUsername(),
-                        null, accountContext.getAuthorities());
+        return new CustomAuthenticationToken(accountContext.getAccount().getId(), accountContext.getAccount().getUsername(), accountContext.getAuthorities());
 
-        return authenticationToken;
+//        return new UsernamePasswordAuthenticationToken(accountContext.getAccount().getUsername(),
+//                null, accountContext.getAuthorities());
     }
 
     /**

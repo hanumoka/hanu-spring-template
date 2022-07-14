@@ -1,6 +1,8 @@
 package hanu.exam.springtestexam.security.filter;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hanu.exam.springtestexam.security.CustomAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +30,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         String username;
         String password;
         try {
-            Map requestMap = new ObjectMapper().readValue(request.getInputStream(), Map.class);
+            TypeReference<Map<String, Object>> ref = new TypeReference<Map<String, Object>>() {};
+            Map<String, Object> requestMap = new ObjectMapper().readValue(request.getInputStream(), ref);
             username = requestMap.get("username").toString();
             password = requestMap.get("password").toString();
         } catch (IOException e) {
