@@ -35,7 +35,6 @@ public class JwtProvider {
 //    @Value("${jwt.header-name}")
 //    private String HEADER_NAME;
 
-
     @PostConstruct
     protected void init() {
         SECRET_KEY = Base64.getEncoder().encodeToString(SECRET_KEY.getBytes());
