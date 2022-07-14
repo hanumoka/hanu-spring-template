@@ -29,6 +29,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         String username;
         String password;
+
         try {
             TypeReference<Map<String, Object>> ref = new TypeReference<Map<String, Object>>() {};
             Map<String, Object> requestMap = new ObjectMapper().readValue(request.getInputStream(), ref);

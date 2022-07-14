@@ -34,6 +34,9 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(jwt)) {
 
             //토큰의 유효성 검사
+            //TODO: 유효성 검사 체크, 정확한지, 만료여부, accesstoken과 refreshtoekn 구분방법(이걸 구분하지 않는다면 refreshToken으로 일반요청이 가능하다, 이게 옳은 방법인가?)
+            // accesstoken, refreshtoken 구분방법? : 서로 다른 시크릿키를 사용하는 것도 방법이 될 수 있을것 같다.
+            // refreshToken 로테이션?
             JWTTokenDTO JWTTokenDTO = jwtProvider.validateToken(jwt);  // TODO: header의 accesstoken 검증시 예외처리 (에외처리 전략 추가 필요)
             System.out.println("token username:" + JWTTokenDTO.getUsername());
             System.out.println("token userId:" + JWTTokenDTO.getUserId());
@@ -46,6 +49,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
             System.out.println("jwt 실패");
+            throw new RuntimeException("요청에 엑세스토큰이 없습니다.");
         }
 
         filterChain.doFilter(request, response);
