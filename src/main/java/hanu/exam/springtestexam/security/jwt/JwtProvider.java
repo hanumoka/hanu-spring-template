@@ -4,7 +4,9 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import hanu.exam.springtestexam.security.dto.JWTTokenDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +45,6 @@ public class JwtProvider {
         Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
         return JWT.create()
                 .withSubject(String.valueOf(userId))
-
                 .withIssuedAt(new Date(System.currentTimeMillis()))
                 .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_VALIDITY_IN_MILLISECONDS))
                 .withIssuer(issuer)
@@ -62,7 +63,7 @@ public class JwtProvider {
                 .sign(algorithm);
     }
 
-    public String validateToken(String token) {
+    public JWTTokenDTO validateToken(String token) {
 
         if(StringUtils.isEmpty(token)){
             throw new JWTVerificationException("액세스 토큰이 존재하지 않습니다.");
@@ -71,8 +72,8 @@ public class JwtProvider {
         Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT decodedJWT = verifier.verify(token);
-        //        String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
-        return decodedJWT.getSubject();
+        Claim claim = decodedJWT.getClaim("username");
+        return new JWTTokenDTO(Long.valueOf(decodedJWT.getSubject()), decodedJWT.getClaim("username").asString());
     }
 
 //    public String getRefreshTokenIdTokenFromAccessToken(String token){

@@ -1,5 +1,7 @@
 package hanu.exam.springtestexam.security.filter;
 
+import hanu.exam.springtestexam.security.CustomAuthenticationToken;
+import hanu.exam.springtestexam.security.dto.JWTTokenDTO;
 import hanu.exam.springtestexam.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -32,16 +34,17 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(jwt)) {
 
             //토큰의 유효성 검사
-            String username = jwtProvider.validateToken(jwt);  // TODO: header의 accesstoken 검증시 예외처리 (에외처리 전략 추가 필요)
-            System.out.println("token username:" + username);
+            JWTTokenDTO JWTTokenDTO = jwtProvider.validateToken(jwt);  // TODO: header의 accesstoken 검증시 예외처리 (에외처리 전략 추가 필요)
+            System.out.println("token username:" + JWTTokenDTO.getUsername());
+            System.out.println("token userId:" + JWTTokenDTO.getUserId());
 
             // 유효한 토큰인 경우 사용자 정보 및 권한(현재없음)을 조회하여 securityContext에 정보를 저장한다.
 
             // 토큰으로 인증 정보를 추출
-//            Authentication authentication = jwtProvider.getAuthentication(jwt);
+            Authentication authentication = new CustomAuthenticationToken(JWTTokenDTO.getUserId(), JWTTokenDTO.getUsername(), null);
             // SecurityContext에 저장
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//        } else {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else {
             System.out.println("jwt 실패");
         }
 

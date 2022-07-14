@@ -29,7 +29,6 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
     private final JwtProvider jwtProvider;
 
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         // 전달받은 인증정보 SecurityContextHolder에 저장
@@ -54,9 +53,6 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
                 , customAuthenticationToken.getUsername()
                 , null
                 , serviceName);
-        // Response
-        System.out.println("accessToken username:" + jwtProvider.validateToken(accessToken));
-        System.out.println("refreshToken username:" + jwtProvider.validateToken(refreshToken));
 
         ApiResponse.token(response, accessToken, refreshToken);
     }
