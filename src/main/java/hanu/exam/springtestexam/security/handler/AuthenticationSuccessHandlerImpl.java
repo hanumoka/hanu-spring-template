@@ -1,17 +1,13 @@
 package hanu.exam.springtestexam.security.handler;
 
 import hanu.exam.springtestexam.common.ApiResponse;
-import hanu.exam.springtestexam.domain.account.entity.Account;
-import hanu.exam.springtestexam.security.CustomAuthenticationToken;
+import hanu.exam.springtestexam.security.jwt.CustomAuthenticationToken;
 import hanu.exam.springtestexam.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 

@@ -1,15 +1,12 @@
 package hanu.exam.springtestexam.security.filter;
 
-import hanu.exam.springtestexam.security.CustomAuthenticationToken;
+import hanu.exam.springtestexam.security.jwt.CustomAuthenticationToken;
 import hanu.exam.springtestexam.security.dto.JwtTokenDto;
 import hanu.exam.springtestexam.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -57,9 +54,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             Authentication authentication = new CustomAuthenticationToken(jwtTokenDto.getUserId(), jwtTokenDto.getUsername(), authorities);
             // SecurityContext에 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
-//            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-//            return this.getAuthenticationManager().authenticate(authenticationToken);
         }
 
         filterChain.doFilter(request, response);
