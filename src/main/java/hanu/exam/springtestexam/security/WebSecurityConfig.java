@@ -60,74 +60,57 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public CustomAuthorizationFilter jwtFilter() {
+    public CustomAuthorizationFilter customAuthorizationFilter() {
         return new CustomAuthorizationFilter(AUTHORIZATION_HEADER, HEADER_NAME, jwtProvider);
     }
 
     @Bean
-//    @Order(1)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+        // GET 화이트리스트
         final String[] GET_WHITELIST = new String[]{
-//                "/login" // 로그인
         };
 
+        // POST 화이트리스트
         final String[] POST_WHITELIST = new String[]{
-//                "/user" // 회원가입
                 "/signup",
                 "/login"
         };
 
+        // disable cors
+        http.cors().disable();
 
-        http.csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 off
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPoint) // 인가실패 응답
-                .accessDeniedHandler(accessDeniedHandler) // 인가 실패
-                .and().authorizeRequests()
-                .antMatchers(HttpMethod.GET, GET_WHITELIST).permitAll() // 해당 GET URL은 모두 허용
-                .antMatchers(HttpMethod.POST, POST_WHITELIST).permitAll() // 해당 POST URL은 모두 허용
-//                .antMatchers("**").hasAnyRole("USER") // 권한 적용
-                .anyRequest().authenticated() // 나머지 요청에 대해서는 인증을 요구
-                .and()
-                .formLogin().disable() // 로그인 페이지 사용 안함
-//                .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class) // 인증필터
-                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)  // jwt 인증필터
+        // disable csrf
+        http.csrf().disable();
+
+        // disable form login, (필요한지 잘 모르겠다.)
+        http.formLogin().disable();
+
+        // Set session management to stateless
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        // 특정 도메인 security 허용
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.GET, GET_WHITELIST).permitAll()
+                .antMatchers(HttpMethod.POST, POST_WHITELIST).permitAll();
+
+
+        // 기본적으로 모든 URL에 대한 권한검증 처리
+        http.authorizeRequests()
+                .anyRequest().authenticated();
+         // 인가실패 헨들러
+        http.exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint) // 인증실패 처리(401처리)
+                .accessDeniedHandler(accessDeniedHandler) // 인가실패 처리(403처리)
+        ;
+
+        //security에 /login처리 연동
+        http.addFilterBefore(customAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)  // jwt 인증필터
                 .apply(customDsl(authenticationSuccessHandler, authenticationFailureHandler))
         ;
 
         return http.build();
     }
-
-    /**
-     * 사용자 요청 정보로 UserPasswordAuthenticationToken 발급하는 필터
-     */
-//    @Bean
-//    public CustomAuthenticationFilter authenticationFilter(AuthenticationManager authenticationManager) throws Exception {
-//        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager);
-//        // 필터 URL 설정
-//        customAuthenticationFilter.setFilterProcessesUrl("/login");
-//        // 인증 성공 핸들러
-//        customAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
-//        // 인증 실패 핸들러
-//        customAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
-//        // BeanFactory에 의해 모든 property가 설정되고 난 뒤 실행
-//        customAuthenticationFilter.afterPropertiesSet();
-//        return customAuthenticationFilter;
-//    }
-
-//    @Bean
-//    public AuthenticationManager authenticationManager(
-//            AuthenticationConfiguration authenticationConfiguration) throws Exception {
-//        return authenticationConfiguration.getAuthenticationManager();
-//    }
-
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-//            throws Exception {
-//        return authenticationConfiguration.getAuthenticationManager();
-//    }
 
 
 }

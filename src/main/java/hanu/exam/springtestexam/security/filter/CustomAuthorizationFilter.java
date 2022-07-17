@@ -24,22 +24,25 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     /**
      * 토큰 인증 정보를 현재 쓰레드의 SecurityContext 에 저장하는 역할 수행
+     * 주의!
+     * - 이 필터는 security에서 검증할 데이터를 수집하는 필터이다.(header의 accesstoken정보)
+     * - 실질적인 검증 기능을 본 필터에서 하면 안된다.
+     * - 데이터가 없다면 그냥 다음 필터체인으로 넘거야 한다.
+     * - 따라서 본 필터에서 예외를 발생시키거나 절대 직접 응답을 하면 안된다.
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
         // Request Header에서 토큰 추출
         String jwt = resolveToken(request);
         // AccessToken 유효성 검사
         if (StringUtils.hasText(jwt)) {
-
             //토큰의 유효성 검사
-            //TODO: 유효성 검사 체크, 정확한지, 만료여부, accesstoken과 refreshtoekn 구분방법(이걸 구분하지 않는다면 refreshToken으로 일반요청이 가능하다, 이게 옳은 방법인가?)
-            // accesstoken, refreshtoken 구분방법? : 서로 다른 시크릿키를 사용하는 것도 방법이 될 수 있을것 같다.
-            // refreshToken 로테이션?
-            JWTTokenDTO JWTTokenDTO = jwtProvider.validateToken(jwt);  // TODO: header의 accesstoken 검증시 예외처리 (에외처리 전략 추가 필요)
-            System.out.println("token username:" + JWTTokenDTO.getUsername());
-            System.out.println("token userId:" + JWTTokenDTO.getUserId());
+            JWTTokenDTO JWTTokenDTO = jwtProvider.validateToken(jwt);
+
+            logger.info("CustomAuthorizationFilter token username:" + JWTTokenDTO.getUsername());
+            logger.info("CustomAuthorizationFilter token userId:" + JWTTokenDTO.getUserId());
 
             // 유효한 토큰인 경우 사용자 정보 및 권한(현재없음)을 조회하여 securityContext에 정보를 저장한다.
 
@@ -47,9 +50,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             Authentication authentication = new CustomAuthenticationToken(JWTTokenDTO.getUserId(), JWTTokenDTO.getUsername(), null);
             // SecurityContext에 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } else {
-            System.out.println("jwt 실패");
-            throw new RuntimeException("요청에 엑세스토큰이 없습니다.");
         }
 
         filterChain.doFilter(request, response);

@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * spring security에서 401 인증실패럴 처리해주는 엔트리포인이
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -20,6 +23,9 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        /**
+         * 이곳에서 401 응답을 만들면 된다.
+         */
         ApiResponse.error(response, ApiResponseType.UNAUTHORIZED_RESPONSE);
     }
 }

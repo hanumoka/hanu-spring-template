@@ -16,7 +16,6 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
         super(authorities);
         this.userId = userId;
         this.username = username;
-
     }
 
     /**

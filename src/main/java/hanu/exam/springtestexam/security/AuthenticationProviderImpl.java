@@ -2,9 +2,9 @@ package hanu.exam.springtestexam.security;
 
 import hanu.exam.springtestexam.security.service.AccountContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 /**
  * AuthenticationFilter에 의해 로그인 인증을 시도하는 주체
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AuthenticationProviderImpl implements AuthenticationProvider {
@@ -29,6 +30,9 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         //파라미터 authentication 는 AuthenticationManager로 부터 전달 받는다.
         //authentication 에는 사용자가 입력한 인증정보(username, password)가 들어있다.
+
+        log.info("=========================================>");
+        log.info("AuthenticationProviderImpl authenticate...");
 
         //인증을 위한 구현 로직이 들어간다.
         String username = authentication.getName();
