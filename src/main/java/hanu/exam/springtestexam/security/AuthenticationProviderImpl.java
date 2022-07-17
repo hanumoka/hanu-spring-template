@@ -40,10 +40,10 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
         AccountContext accountContext = (AccountContext)userDetailsService.loadUserByUsername(username);
 
-        if(!passwordEncoder.matches(password, accountContext.getAccount().getPassword())){
-            //패스워드 검증
-            throw new BadCredentialsException("BadCredentialsException");
-        }
+//        if(!passwordEncoder.matches(password, accountContext.getAccount().getPassword())){
+//            //패스워드 검증
+//            throw new BadCredentialsException("BadCredentialsException");
+//        }
 
         // 패스워드 말고도 필요한 검증을 이곳에서 처리하면 된다.
         // ex. 계정 lock, 비밀번호 만료 등등...
@@ -54,12 +54,29 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
     /**
      * provider의 동작 여부를 설정
+     * supports 메소드를 통해 해당 AuthenticationProvider가 지원하는 인증 타입인지 확인합니다.
+     * -> 요청에 인증타입을 확인?
      */
     @Override
     public boolean supports(Class<?> authentication) {
         // TODO: CustomAuthorizationFilter doFilter -> 이곳으로 온다.
+        // 로그인 요청도 이걸 탄아 supports -> AuthenticationProviderImpl authenticate...
+        // 실제 로그인 처리 직전을 거친다.
+
+        // TODO: /login 오는 요청타입을 검사
+        // authentication.equals(UsernamePasswordAuthenticationToken.class);
+
+        // TODO: /일반적인 jwt 토큰요텅 타입 검사
+        // CustomAuthenticationToken.class.isAssignableFrom(authentication);
+        // 이 메소드의 역할은?
         log.info("supports");
-        return authentication.equals(UsernamePasswordAuthenticationToken.class);
+
+        if(authentication.equals(UsernamePasswordAuthenticationToken.class)) return true;
+
+        if(CustomAuthenticationToken.class.isAssignableFrom(authentication)) return true;
+
+        return false;
+
     }
 
 }

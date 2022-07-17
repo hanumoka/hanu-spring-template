@@ -3,6 +3,7 @@ package hanu.exam.springtestexam.security;
 import hanu.exam.springtestexam.security.filter.CustomAuthorizationFilter;
 import hanu.exam.springtestexam.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import static hanu.exam.springtestexam.security.AuthCustomDsl.customDsl;
 
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor

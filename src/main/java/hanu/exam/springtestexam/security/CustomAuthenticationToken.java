@@ -9,8 +9,9 @@ import java.util.Collection;
 @Getter
 public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 
-    private String username;
     private Long userId;
+    private String username;
+
 
     public CustomAuthenticationToken(Long userId, String username, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
@@ -35,6 +36,6 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getPrincipal() {
-        return this.userId;
+        return this.username;
     }
 }
