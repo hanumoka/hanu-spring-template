@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * spring security에서 403 인가실패를 처리하는 헨들러
+ * spring security에서 403 인가실패를 처리하는 헨들러(인증이 아니라 인가중 실패 처리)
  */
 @Component
 public class AccessDeniedHandlerImpl implements AccessDeniedHandler {

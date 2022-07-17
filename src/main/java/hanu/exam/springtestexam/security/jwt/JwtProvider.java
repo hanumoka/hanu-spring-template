@@ -6,7 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import hanu.exam.springtestexam.security.dto.JWTTokenDTO;
+import hanu.exam.springtestexam.security.dto.JwtTokenDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,9 +31,6 @@ public class JwtProvider {
 
     @Value("${jwt.refresh-token-expire-length}")
     private long REFRESH_VALIDITY_IN_MILLISECONDS;
-
-//    @Value("${jwt.header-name}")
-//    private String HEADER_NAME;
 
     @PostConstruct
     protected void init() {
@@ -62,7 +59,7 @@ public class JwtProvider {
                 .sign(algorithm);
     }
 
-    public JWTTokenDTO validateToken(String token) {
+    public JwtTokenDto validateToken(String token) {
 
         if(StringUtils.isEmpty(token)){
             throw new JWTVerificationException("액세스 토큰이 존재하지 않습니다.");
@@ -72,7 +69,7 @@ public class JwtProvider {
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT decodedJWT = verifier.verify(token);
         Claim claim = decodedJWT.getClaim("username");
-        return new JWTTokenDTO(Long.valueOf(decodedJWT.getSubject()), decodedJWT.getClaim("username").asString());
+        return new JwtTokenDto(Long.valueOf(decodedJWT.getSubject()), decodedJWT.getClaim("username").asString());
     }
 
 //    public String getRefreshTokenIdTokenFromAccessToken(String token){

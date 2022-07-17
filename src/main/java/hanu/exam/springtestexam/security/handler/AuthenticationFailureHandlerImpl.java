@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * 로그인 실패 응답처리
+ */
 @Component
 public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHandler {
 

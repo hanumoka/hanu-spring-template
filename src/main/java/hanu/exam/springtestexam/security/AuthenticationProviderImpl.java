@@ -50,9 +50,6 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
         //검증이 성공한 검증정보를 authenticationManager에게 다시 리턴한다.
         return new CustomAuthenticationToken(accountContext.getAccount().getId(), accountContext.getAccount().getUsername(), accountContext.getAuthorities());
-
-//        return new UsernamePasswordAuthenticationToken(accountContext.getAccount().getUsername(),
-//                null, accountContext.getAuthorities());
     }
 
     /**
@@ -60,6 +57,8 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
      */
     @Override
     public boolean supports(Class<?> authentication) {
+        // TODO: CustomAuthorizationFilter doFilter -> 이곳으로 온다.
+        log.info("supports");
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 

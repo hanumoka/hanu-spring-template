@@ -19,6 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * 로그인이 성공되면 토큰틀 생성해서 응답한다.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

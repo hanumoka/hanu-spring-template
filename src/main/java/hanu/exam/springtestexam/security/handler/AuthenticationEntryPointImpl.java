@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * spring security에서 401 인증실패럴 처리해주는 엔트리포인이
+ * 로그인실패를 제외한 권한이 필요한 요청에 대한 401 응답처리
  */
 @Slf4j
 @RequiredArgsConstructor

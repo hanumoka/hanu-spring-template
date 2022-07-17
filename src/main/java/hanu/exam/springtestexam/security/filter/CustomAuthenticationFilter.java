@@ -14,6 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * 주의 로그인 실패시 : AuthenticationServiceException 를 던저야
+ * AuthenticationFailureHandlerImpl 가 동작한다.
+ */
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {

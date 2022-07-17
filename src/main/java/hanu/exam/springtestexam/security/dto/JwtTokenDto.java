@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class JWTTokenDTO {
+public class JwtTokenDto {
     private Long userId;
     private String username;
 
-    private JWTTokenDTO(){}
+    private JwtTokenDto(){}
 }
