@@ -1,0 +1,21 @@
+### 회원가입
+POST http://localhost:8080/signup
+Content-Type: application/json
+
+{
+    "username": "test99",
+    "password": "1234"
+}
+
+### 로그인
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "test1",
+  "password": "1234"
+}
+
+### 자기정보조회
+GET http://localhost:8080/account
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoiaGFudS1zcHJpbmctdGVtcGxhdGUiLCJleHAiOjE2NTgxNTU3NjYsImlhdCI6MTY1ODE1NDc2NiwidXNlcm5hbWUiOiJ0ZXN0MSJ9.AbQNJg5Eg5RMFSZNrVEYhmXhrnMn66JYm-gOjLiCTjI
