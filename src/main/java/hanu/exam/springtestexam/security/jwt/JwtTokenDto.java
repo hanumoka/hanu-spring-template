@@ -1,4 +1,4 @@
-package hanu.exam.springtestexam.security.dto;
+package hanu.exam.springtestexam.security.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

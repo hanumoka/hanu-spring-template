@@ -1,7 +1,7 @@
 package hanu.exam.springtestexam.security.filter;
 
-import hanu.exam.springtestexam.security.jwt.CustomAuthenticationToken;
-import hanu.exam.springtestexam.security.dto.JwtTokenDto;
+import hanu.exam.springtestexam.security.token.CustomAuthenticationToken;
+import hanu.exam.springtestexam.security.jwt.JwtTokenDto;
 import hanu.exam.springtestexam.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

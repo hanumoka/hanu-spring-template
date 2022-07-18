@@ -1,7 +1,7 @@
 package hanu.exam.springtestexam.security.handler;
 
 import hanu.exam.springtestexam.common.ApiResponse;
-import hanu.exam.springtestexam.security.jwt.CustomAuthenticationToken;
+import hanu.exam.springtestexam.security.token.CustomAuthenticationToken;
 import hanu.exam.springtestexam.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

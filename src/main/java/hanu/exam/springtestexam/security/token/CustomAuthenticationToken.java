@@ -1,4 +1,4 @@
-package hanu.exam.springtestexam.security.jwt;
+package hanu.exam.springtestexam.security.token;
 
 import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
