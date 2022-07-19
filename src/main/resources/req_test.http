@@ -1,14 +1,5 @@
-### 회원가입
-POST http://localhost:8080/signup
-Content-Type: application/json
-
-{
-    "username": "test99",
-    "password": "1234"
-}
-
-### 로그인 -> 로그인 응답결과를 환경변수에 저장해서 다른데에서 불러 사용할수는 없나?
-POST http://localhost:8080/login
+### 로그인
+POST http://{{host}}:{{port}}/login
 Content-Type: application/json
 
 {
@@ -16,6 +7,36 @@ Content-Type: application/json
   "password": "1234"
 }
 
+> {% //response handler
+client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+client.log(response.body.result.accessToken);
+client.global.set("access_token", response.body.result.accessToken);
+%}
+
+### 회원가입
+POST http://localhost:8080/signup
+Content-Type: application/json
+
+{
+  "username": "test99",
+  "password": "1234"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+
 ### 자기정보조회
 GET http://localhost:8080/account
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoiaGFudS1zcHJpbmctdGVtcGxhdGUiLCJleHAiOjE2NTgxNTU3NjYsImlhdCI6MTY1ODE1NDc2NiwidXNlcm5hbWUiOiJ0ZXN0MSJ9.AbQNJg5Eg5RMFSZNrVEYhmXhrnMn66JYm-gOjLiCTjI
+Authorization: Bearer {{access_token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
