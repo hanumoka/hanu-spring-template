@@ -2,6 +2,7 @@ package hanu.exam.springtestexam.security.filter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +40,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             Map<String, Object> requestMap = new ObjectMapper().readValue(request.getInputStream(), ref);
             username = requestMap.get("username").toString();
             password = requestMap.get("password").toString();
+
         } catch (IOException e) {
+            //TODO: username, password가 필수 입력값 이라는 응답을 명시적으로 해줄 필요가 있다.
             e.printStackTrace();
             throw new AuthenticationServiceException(e.getMessage(), e);
         }
