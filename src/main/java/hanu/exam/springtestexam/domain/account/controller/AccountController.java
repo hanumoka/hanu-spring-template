@@ -28,6 +28,9 @@ public class AccountController {
         return new ApiResponse();
     }
 
+    //TODO: 엑시스 토큰 만료시 리프레시 토큰 발급 컨트롤러 추가하기
+
+
     //TODO: 엑세스토큰을 재발급하는 명시적인 컨트롤러가 필요한가?
     //TODO: 그냥 액세스토큰 검사시 엑세스토큰이 만료되면 자동으로 refresh token을 가져와서 accesstoken을 발급하면 좋지 않은가?
     //TODO: refreshToken을 프론트에 전달하는것은 옳은가?
