@@ -1,24 +1,40 @@
 package hanu.exam.springtestexam.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpHeaders;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.validation.ConstraintViolationException;
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(Exception.class)
+    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
+        List<String> details = new ArrayList<>();
+        details.add(ex.getLocalizedMessage());
+        ErrorResponse error = new ErrorResponse("Server Error", details);
+        return new ResponseEntity(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+//    @ExceptionHandler(NotExpiredAccessTokenException.class)
+//    public final ResponseEntity<Object> handleNotExpiredAccessTokenException(
+//            NotExpiredAccessTokenException ex, WebRequest request) {
+//        List<String> details = new ArrayList<>();
+//        details.add(ex.getLocalizedMessage());
+//        ErrorResponse error = new ErrorResponse("AccessTokne is not expired.", details);
+//        return new ResponseEntity(error, ex.get);
+//    }
 
 //    @ExceptionHandler(value = { ConstraintViolationException.class, DataIntegrityViolationException.class})
 //    protected ResponseEntity<ErrorResponse> handleDataException() {

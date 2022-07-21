@@ -3,8 +3,11 @@ package hanu.exam.springtestexam.domain.account.controller;
 import hanu.exam.springtestexam.common.ApiResponse;
 import hanu.exam.springtestexam.domain.account.dto.UserJoinDTO;
 import hanu.exam.springtestexam.domain.account.service.AccountService;
+import hanu.exam.springtestexam.exception.NotExpiredAccessTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -29,6 +32,18 @@ public class AccountController {
     }
 
     //TODO: 엑시스 토큰 만료시 리프레시 토큰 발급 컨트롤러 추가하기
+    @PostMapping(name="액세스토큰 리프레시토큰 재발급", value="/reissue")
+    public ResponseEntity<ApiResponse> reIssueTokens(){
+        log.info("reIssueTokens");
+        /**
+         * accessToken이 만료가 된 경우에만 토큰들을 재발행한다.
+         * accessToken이 만료전이라면 아직 만료된 토큰이 아니라는 응답을 해준다.
+         */
+
+        throw new NotExpiredAccessTokenException("액세스토큰이 만료되지 않음.");
+
+//        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse());
+    }
 
 
     //TODO: 엑세스토큰을 재발급하는 명시적인 컨트롤러가 필요한가?

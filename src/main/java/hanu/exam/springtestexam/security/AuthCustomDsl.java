@@ -1,5 +1,6 @@
 package hanu.exam.springtestexam.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hanu.exam.springtestexam.security.filter.CustomAuthenticationFilter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,6 +10,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 public class AuthCustomDsl extends AbstractHttpConfigurer<AuthCustomDsl, HttpSecurity> {
 
+    private final ObjectMapper objectMapper;
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
     private final AuthenticationFailureHandler authenticationFailureHandler;
 
@@ -16,7 +18,7 @@ public class AuthCustomDsl extends AbstractHttpConfigurer<AuthCustomDsl, HttpSec
     public void configure(HttpSecurity http) {
         AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
 
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager);
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager, objectMapper);
         // 필터 URL 설정
         customAuthenticationFilter.setFilterProcessesUrl("/login");
         // 인증 성공 핸들러
@@ -31,12 +33,18 @@ public class AuthCustomDsl extends AbstractHttpConfigurer<AuthCustomDsl, HttpSec
 
 
     public AuthCustomDsl(AuthenticationSuccessHandler authenticationSuccessHandler
-            , AuthenticationFailureHandler authenticationFailureHandler) {
+            , AuthenticationFailureHandler authenticationFailureHandler
+            , ObjectMapper objectMapper
+    ) {
         this.authenticationFailureHandler = authenticationFailureHandler;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
+        this.objectMapper = objectMapper;
     }
 
-    public static AuthCustomDsl customDsl(AuthenticationSuccessHandler authenticationSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler) {
-        return new AuthCustomDsl(authenticationSuccessHandler, authenticationFailureHandler);
+    public static AuthCustomDsl customDsl(AuthenticationSuccessHandler authenticationSuccessHandler
+            , AuthenticationFailureHandler authenticationFailureHandler
+            , ObjectMapper objectMapper
+    ) {
+        return new AuthCustomDsl(authenticationSuccessHandler, authenticationFailureHandler, objectMapper);
     }
 }

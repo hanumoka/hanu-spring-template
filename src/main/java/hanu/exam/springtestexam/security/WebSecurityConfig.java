@@ -1,5 +1,6 @@
 package hanu.exam.springtestexam.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hanu.exam.springtestexam.security.filter.CustomAuthorizationFilter;
 import hanu.exam.springtestexam.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,7 @@ public class WebSecurityConfig {
     private final AuthenticationFailureHandler authenticationFailureHandler;
     // 인가 실패 핸들러
     private final AccessDeniedHandler accessDeniedHandler;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
@@ -112,7 +114,7 @@ public class WebSecurityConfig {
                 .anyRequest().authenticated();
 
         //security에 /login 인증 필터 연동
-        http.apply(customDsl(authenticationSuccessHandler, authenticationFailureHandler));
+        http.apply(customDsl(authenticationSuccessHandler, authenticationFailureHandler, objectMapper));
 
         //security에 jwt 토큰 인증필터 적용
         http.addFilterBefore(customAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

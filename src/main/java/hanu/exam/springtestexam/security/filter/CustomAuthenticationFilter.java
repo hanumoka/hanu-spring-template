@@ -21,8 +21,11 @@ import java.util.Map;
  */
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
+    private final ObjectMapper objectMapper;
+
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper) {
         super.setAuthenticationManager(authenticationManager);
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -37,7 +40,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         try {
             TypeReference<Map<String, Object>> ref = new TypeReference<Map<String, Object>>() {};
-            Map<String, Object> requestMap = new ObjectMapper().readValue(request.getInputStream(), ref);
+            Map<String, Object> requestMap = objectMapper.readValue(request.getInputStream(), ref);
             username = requestMap.get("username").toString();
             password = requestMap.get("password").toString();
 
@@ -45,6 +48,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             //TODO: username, password가 필수 입력값 이라는 응답을 명시적으로 해줄 필요가 있다.
             e.printStackTrace();
             throw new AuthenticationServiceException(e.getMessage(), e);
+            // TODO: badRequestException을 만들어서 던지자
         }
 
         System.out.println("username = " + username);

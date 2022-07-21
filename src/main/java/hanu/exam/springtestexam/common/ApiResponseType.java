@@ -9,6 +9,7 @@ public enum ApiResponseType {
 
     SUCCESS(200, "Success"),
 
+    //TODO: 아래 내용 수정해야됨. http 응답코드는 구현체를 사용하자.
     UNAUTHORIZED_RESPONSE(401, "Unauthorized"),
     FORBIDDEN_RESPONSE(403, "Forbidden"),
     NOT_FOUND_RESPONSE(404, "Not Found"),

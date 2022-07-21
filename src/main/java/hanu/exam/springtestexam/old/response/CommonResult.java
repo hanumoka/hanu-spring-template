@@ -1,4 +1,4 @@
-package hanu.exam.springtestexam.response;
+package hanu.exam.springtestexam.old.response;
 
 import lombok.Getter;
 import lombok.Setter;

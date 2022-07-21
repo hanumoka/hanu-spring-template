@@ -22,7 +22,7 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
         /**
          * 이곳에서 403 응답을 만들면 된다.
          */
-        ApiResponse.error(response, ApiResponseType.FORBIDDEN_RESPONSE);
+        ApiResponse.error(response, ApiResponseType.UNAUTHORIZED_RESPONSE);
     }
 
 }
