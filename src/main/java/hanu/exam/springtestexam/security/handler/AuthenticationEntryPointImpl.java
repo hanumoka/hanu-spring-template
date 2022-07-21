@@ -4,6 +4,7 @@ import hanu.exam.springtestexam.common.ApiResponse;
 import hanu.exam.springtestexam.common.ApiResponseType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 로그인실패를 제외한 권한이 필요한 요청에 대한 401 응답처리
+ * 로그인 실패
+ * - 입력 파라미터 포멧 및 형식등이 잘못된 경우
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -26,7 +28,8 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
         /**
          * 이곳에서 401 응답을 만들면 된다.
          */
-        ApiResponse.error(response, ApiResponseType.UNAUTHORIZED_RESPONSE);
+        log.debug("AuthenticationEntryPointImpl commence");
+        ApiResponse.error(response, HttpStatus.UNAUTHORIZED, ApiResponseType.UNAUTHORIZED_RESPONSE);
     }
 }
 

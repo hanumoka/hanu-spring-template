@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import javax.servlet.ServletResponse;
@@ -22,6 +23,7 @@ public class ApiResponse {
     private int code = ApiResponseType.SUCCESS.getCode();
     private String msg = ApiResponseType.SUCCESS.getMessage();
 
+
     public static ApiResponse error(ApiResponseType apiResponseType) {
         return new ApiResponse(apiResponseType.getCode(), apiResponseType.getMessage());
     }
@@ -38,15 +40,35 @@ public class ApiResponse {
         return new ApiResponse(apiResponseType.getCode(), message);
     }
 
-    public static void error(ServletResponse response, ApiResponseType apiResponseType) throws IOException {
+    public static void error(ServletResponse response, HttpStatus httpStatus) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setCharacterEncoding("UTF-8");
-        httpServletResponse.setStatus(apiResponseType.getCode());
+        httpServletResponse.setStatus(httpStatus.value());
+        httpServletResponse.getWriter().write(Objects.requireNonNull(objectMapper.writeValueAsString(httpStatus.getReasonPhrase())));
+    }
+
+    public static void error(ServletResponse response, HttpStatus httpStatus, ApiResponseType apiResponseType) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.setStatus(httpStatus.value());
         httpServletResponse.getWriter().write(Objects.requireNonNull(objectMapper.writeValueAsString(ApiResponse.error(apiResponseType))));
     }
 
+
+//    public static void error(ServletResponse response, ApiResponseType apiResponseType) throws IOException {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+//        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//        httpServletResponse.setCharacterEncoding("UTF-8");
+//        httpServletResponse.setStatus(apiResponseType.getCode());
+//        httpServletResponse.getWriter().write(Objects.requireNonNull(objectMapper.writeValueAsString(ApiResponse.error(apiResponseType))));
+//    }
+
+    //security에서 토큰 발행 응답용
     public static void token(ServletResponse response, String accessToken, String refreshToken) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;

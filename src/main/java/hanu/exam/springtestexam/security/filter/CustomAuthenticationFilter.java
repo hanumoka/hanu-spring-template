@@ -2,7 +2,6 @@ package hanu.exam.springtestexam.security.filter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,6 +48,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             e.printStackTrace();
             throw new AuthenticationServiceException(e.getMessage(), e);
             // TODO: badRequestException을 만들어서 던지자
+            // TODO: 아니면 여기서 예외를 던지지 말고 뒤에 authenticate에서 일괄적으로 처리하는것도 방법일 수 있겠다.
         }
 
         System.out.println("username = " + username);

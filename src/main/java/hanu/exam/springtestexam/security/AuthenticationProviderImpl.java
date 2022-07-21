@@ -5,6 +5,7 @@ import hanu.exam.springtestexam.security.service.AccountContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,6 +36,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         log.info("=========================================>");
         log.info("AuthenticationProviderImpl authenticate...");
 
+        //TODO: 아래 로잭 위치 수정 필요 else if 문 내부로 들어가야 할듯
         //인증을 위한 구현 로직이 들어간다.
         String username = authentication.getName();
 
