@@ -8,6 +8,5 @@ import lombok.Getter;
 public class JwtTokenDto {
     private Long userId;
     private String username;
-
     private JwtTokenDto(){}
 }

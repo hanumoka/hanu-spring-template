@@ -55,9 +55,15 @@ decorator:
       enable-logging: true
 
 jwt:
-  secret-key: sebure-key-20220712
-  access-token-expire-length: 1000000
-  refresh-token-expire-length: 2000000
   authorization-header: Authorization
   header-name: Bearer
+  access-token:
+    secret-key: sebure-access-key-20220712
+    expire-length: 5000
+  refresh-token:
+    secret-key: sebure-refresh-key-20220712
+    expire-length: 15000
+#  access-token-expire-length: 1000000
+#  refresh-token-expire-length: 2000000
+
 

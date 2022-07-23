@@ -20,24 +20,24 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ApiResponse {
 
-    private int code = ApiResponseType.SUCCESS.getCode();
-    private String msg = ApiResponseType.SUCCESS.getMessage();
+    private int code = ApiResponseCode.SUCCESS.getCode();
+    private String msg = ApiResponseCode.SUCCESS.getMessage();
 
 
-    public static ApiResponse error(ApiResponseType apiResponseType) {
-        return new ApiResponse(apiResponseType.getCode(), apiResponseType.getMessage());
+    public static ApiResponse error(ApiResponseCode apiResponseCode) {
+        return new ApiResponse(apiResponseCode.getCode(), apiResponseCode.getMessage());
     }
 
-    public static ApiResponse error(ApiResponseType apiResponseType, String Message) {
-        return new ApiResponse(apiResponseType.getCode(), Message);
+    public static ApiResponse error(ApiResponseCode apiResponseCode, String Message) {
+        return new ApiResponse(apiResponseCode.getCode(), Message);
     }
 
-    public static ApiResponse error(ApiResponseType apiResponseType, List<ReplaceString> replaceStringList) {
-        String message = apiResponseType.getMessage();
+    public static ApiResponse error(ApiResponseCode apiResponseCode, List<ReplaceString> replaceStringList) {
+        String message = apiResponseCode.getMessage();
         for (ReplaceString replaceString : replaceStringList) {
             message = message.replace(replaceString.getKey(), replaceString.getValue());
         }
-        return new ApiResponse(apiResponseType.getCode(), message);
+        return new ApiResponse(apiResponseCode.getCode(), message);
     }
 
     public static void error(ServletResponse response, HttpStatus httpStatus) throws IOException {
@@ -49,13 +49,13 @@ public class ApiResponse {
         httpServletResponse.getWriter().write(Objects.requireNonNull(objectMapper.writeValueAsString(httpStatus.getReasonPhrase())));
     }
 
-    public static void error(ServletResponse response, HttpStatus httpStatus, ApiResponseType apiResponseType) throws IOException {
+    public static void error(ServletResponse response, HttpStatus httpStatus, ApiResponseCode apiResponseCode) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setStatus(httpStatus.value());
-        httpServletResponse.getWriter().write(Objects.requireNonNull(objectMapper.writeValueAsString(ApiResponse.error(apiResponseType))));
+        httpServletResponse.getWriter().write(Objects.requireNonNull(objectMapper.writeValueAsString(ApiResponse.error(apiResponseCode))));
     }
 
 
@@ -74,7 +74,7 @@ public class ApiResponse {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setCharacterEncoding("UTF-8");
-        httpServletResponse.setStatus(ApiResponseType.SUCCESS.getCode());
+        httpServletResponse.setStatus(ApiResponseCode.SUCCESS.getCode());
         Map<String, String> tokenMap = new HashMap<>();
         tokenMap.put("accessToken", accessToken);
         tokenMap.put("refreshToken", refreshToken);

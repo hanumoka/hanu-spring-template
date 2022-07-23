@@ -1,7 +1,7 @@
 package hanu.exam.springtestexam.security.handler;
 
 import hanu.exam.springtestexam.common.ApiResponse;
-import hanu.exam.springtestexam.common.ApiResponseType;
+import hanu.exam.springtestexam.common.ApiResponseCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
          * 이곳에서 401 응답을 만들면 된다.
          */
         log.debug("AuthenticationEntryPointImpl commence");
-        ApiResponse.error(response, HttpStatus.UNAUTHORIZED, ApiResponseType.UNAUTHORIZED_RESPONSE);
+        ApiResponse.error(response, HttpStatus.UNAUTHORIZED, ApiResponseCode.UNAUTHORIZED_RESPONSE);
     }
 }
 

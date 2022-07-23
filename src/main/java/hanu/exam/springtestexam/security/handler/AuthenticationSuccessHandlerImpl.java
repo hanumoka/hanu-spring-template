@@ -42,7 +42,6 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         String accessToken = jwtProvider.createAccessToken(
                 customAuthenticationToken.getUserId()
                 , customAuthenticationToken.getUsername()
-                , null
                 , serviceName);
 
 
@@ -50,7 +49,6 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         String refreshToken = jwtProvider.createAccessToken(
                 customAuthenticationToken.getUserId()
                 , customAuthenticationToken.getUsername()
-                , null
                 , serviceName);
 
         ApiResponse.token(response, accessToken, refreshToken);

@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
@@ -22,22 +24,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtProvider {
 
-    @Value("${jwt.secret-key}")
-    private String SECRET_KEY;
+    @Value("${jwt.access-token.secret-key}")
+    private String ACCESS_TOKEN_SECRET_KEY;
 
-    @Value("${jwt.access-token-expire-length}")
+    @Value("${jwt.refresh-token.secret-key}")
+    private String REFRESH_TOKEN_SECRET_KEY;
+
+    @Value("${jwt.access-token.expire-length}")
     private long ACCESS_VALIDITY_IN_MILLISECONDS;
 
-    @Value("${jwt.refresh-token-expire-length}")
+    @Value("${jwt.refresh-token.expire-length}")
     private long REFRESH_VALIDITY_IN_MILLISECONDS;
 
     @PostConstruct
     protected void init() {
-        SECRET_KEY = Base64.getEncoder().encodeToString(SECRET_KEY.getBytes());
+        ACCESS_TOKEN_SECRET_KEY = Base64.getEncoder().encodeToString(ACCESS_TOKEN_SECRET_KEY.getBytes());
     }
 
-    public String createAccessToken(Long userId, String username, List<String> roles, String issuer){
-        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
+    public String createAccessToken(Long userId, String username, String issuer){
+        Algorithm algorithm = Algorithm.HMAC256(ACCESS_TOKEN_SECRET_KEY.getBytes());
         return JWT.create()
                 .withSubject(String.valueOf(userId))
                 .withIssuedAt(new Date(System.currentTimeMillis()))
@@ -45,30 +50,41 @@ public class JwtProvider {
                 .withIssuer(issuer)
                 .withClaim("username", username)
 //                .withClaim("roles", roles)  // 권한은 현재 없음
+                //MEMO: 권한 정보를 토큰에 저장하는것이 좋은가? 필터에서 권한을 검사하는것이 더 유연해보인다.
                 .sign(algorithm);
     }
 
     public String createRefreshToken(Long userId, String username, String issuer){
-        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
+        Algorithm algorithm = Algorithm.HMAC256(REFRESH_TOKEN_SECRET_KEY.getBytes());
         return JWT.create()
                 .withSubject(String.valueOf(userId))
                 .withIssuedAt(new Date(System.currentTimeMillis()))
                 .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_VALIDITY_IN_MILLISECONDS))
                 .withIssuer(issuer)
+                .withClaim("username", username)
                 .sign(algorithm);
     }
 
-    public JwtTokenDto validateToken(String token) {
+    public JwtTokenDto validateAccessToken(String token) {
 
         if(StringUtils.isEmpty(token)){
             throw new JWTVerificationException("액세스 토큰이 존재하지 않습니다.");
         }
 
-        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes());
+        Algorithm algorithm = Algorithm.HMAC256(ACCESS_TOKEN_SECRET_KEY.getBytes());
         JWTVerifier verifier = JWT.require(algorithm).build();
-        DecodedJWT decodedJWT = verifier.verify(token);
-        Claim claim = decodedJWT.getClaim("username");
-        return new JwtTokenDto(Long.valueOf(decodedJWT.getSubject()), decodedJWT.getClaim("username").asString());
+        DecodedJWT decodedJWT;
+        JwtTokenDto jwtTokenDto;
+
+        try{
+            decodedJWT = verifier.verify(token);
+            Claim claim = decodedJWT.getClaim("username");
+        }catch(TokenExpiredException e1){
+            e1.printStackTrace();
+            throw e1;
+        }
+        //SignatureVerificationException
+        return jwtTokenDto = new JwtTokenDto(Long.valueOf(decodedJWT.getSubject()), decodedJWT.getClaim("username").asString());
     }
 
 //    public String getRefreshTokenIdTokenFromAccessToken(String token){

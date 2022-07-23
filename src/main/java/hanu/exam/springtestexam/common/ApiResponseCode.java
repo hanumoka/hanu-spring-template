@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ApiResponseType {
+public enum ApiResponseCode {
 
     SUCCESS(200, "Success"),
 

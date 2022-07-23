@@ -1,5 +1,6 @@
 package hanu.exam.springtestexam.security.filter;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import hanu.exam.springtestexam.security.token.CustomAuthenticationToken;
 import hanu.exam.springtestexam.security.jwt.JwtTokenDto;
 import hanu.exam.springtestexam.security.jwt.JwtProvider;
@@ -38,11 +39,13 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         // Request Header에서 토큰 추출
-        String jwt = resolveToken(request);
+        String jwt = resolveAccessToken(request);
         // AccessToken 유효성 검사
         if (StringUtils.hasText(jwt)) {
+
+            JwtTokenDto jwtTokenDto;
             //토큰의 유효성 검사
-            JwtTokenDto jwtTokenDto = jwtProvider.validateToken(jwt);
+            jwtTokenDto = jwtProvider.validateAccessToken(jwt);
 
             logger.info("CustomAuthorizationFilter token username:" + jwtTokenDto.getUsername());
             logger.info("CustomAuthorizationFilter token userId:" + jwtTokenDto.getUserId());
@@ -62,7 +65,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     /**
      * Request Header에서 토큰 추출
      */
-    private String resolveToken(HttpServletRequest request) {
+    private String resolveAccessToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(HEADER_NAME)) {
             return bearerToken.substring(7);
