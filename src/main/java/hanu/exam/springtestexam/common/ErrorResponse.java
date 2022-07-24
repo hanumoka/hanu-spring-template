@@ -1,11 +1,13 @@
 package hanu.exam.springtestexam.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: 해당응답이 발생시 해당 내용을 취합해서 aws의 클라우드와치에 전달하거나 별도의 에러응답 로그를 생성해도 될것 같다.
 @Getter
 @Builder
 @AllArgsConstructor
@@ -16,7 +18,9 @@ public class ErrorResponse {
 
     private String timestamp;
     private String path;
+    @JsonIgnore
     private String controllerName;
+    @JsonIgnore
     private String methodName;
     private int status;
     private String message;
