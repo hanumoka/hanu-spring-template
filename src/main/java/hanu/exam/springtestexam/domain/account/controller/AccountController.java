@@ -7,6 +7,7 @@ import hanu.exam.springtestexam.domain.account.service.AccountService;
 import hanu.exam.springtestexam.exception.auth.NotExpiredAccessTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,9 +45,9 @@ public class AccountController {
         //TODO: accessToken이 만료되었느지 여부를 검사하는 유틸리티가 필요하다.
 //        jwtProvider.validateAccessToken()
 
-        throw new NotExpiredAccessTokenException(ErrorCode.JWT_NOT_EXPIRED_ACCESS_TOKEN);
+//        throw new NotExpiredAccessTokenException(ErrorCode.JWT_NOT_EXPIRED_ACCESS_TOKEN);
 
-//        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse());
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse());
     }
 
 
