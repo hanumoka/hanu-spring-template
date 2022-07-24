@@ -80,7 +80,7 @@ public class JwtProvider {
             decodedJWT = verifier.verify(token);
             Claim claim = decodedJWT.getClaim("username");
         }catch(TokenExpiredException e1){
-            e1.printStackTrace();
+            log.error("엑세스 토큰 만료...");
             throw e1;
         }
         //SignatureVerificationException

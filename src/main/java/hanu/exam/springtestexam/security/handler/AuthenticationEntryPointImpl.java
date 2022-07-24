@@ -1,7 +1,8 @@
 package hanu.exam.springtestexam.security.handler;
 
-import hanu.exam.springtestexam.common.ApiResponse;
-import hanu.exam.springtestexam.common.ApiResponseCode;
+
+import hanu.exam.springtestexam.common.ErrorCode;
+import hanu.exam.springtestexam.common.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,12 +25,14 @@ import java.io.IOException;
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request,
+                         HttpServletResponse response,
+                         AuthenticationException authException) throws IOException {
         /**
          * 이곳에서 401 응답을 만들면 된다.
          */
-        log.debug("AuthenticationEntryPointImpl commence");
-        ApiResponse.error(response, HttpStatus.UNAUTHORIZED, ApiResponseCode.UNAUTHORIZED_RESPONSE);
+        log.warn("AuthenticationEntryPointImpl commence");
+        ErrorResponse.error(response, HttpStatus.UNAUTHORIZED, ErrorCode.JWT_EXPIRED_ACCESS_TOKEN);
     }
 }
 

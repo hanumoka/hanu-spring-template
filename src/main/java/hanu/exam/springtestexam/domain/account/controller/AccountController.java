@@ -4,7 +4,7 @@ import hanu.exam.springtestexam.common.ApiResponse;
 import hanu.exam.springtestexam.common.ErrorCode;
 import hanu.exam.springtestexam.domain.account.dto.UserJoinDTO;
 import hanu.exam.springtestexam.domain.account.service.AccountService;
-import hanu.exam.springtestexam.exception.jwt.NotExpiredAccessTokenException;
+import hanu.exam.springtestexam.exception.auth.NotExpiredAccessTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

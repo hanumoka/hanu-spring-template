@@ -2,6 +2,8 @@ package hanu.exam.springtestexam.security.handler;
 
 import hanu.exam.springtestexam.common.ApiResponse;
 import hanu.exam.springtestexam.common.ApiResponseCode;
+import hanu.exam.springtestexam.common.ErrorCode;
+import hanu.exam.springtestexam.common.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,8 +27,9 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
         /**
          * 이곳에서 403 응답을 만들면 된다.
          */
-        log.debug("AccessDeniedHandlerImpl hanlde...");
-        ApiResponse.error(response, HttpStatus.UNAUTHORIZED, ApiResponseCode.UNAUTHORIZED_RESPONSE);
+        log.warn("AccessDeniedHandlerImpl hanlde...");
+//        ApiResponse.error(response, HttpStatus.UNAUTHORIZED, ApiResponseCode.UNAUTHORIZED_RESPONSE);
+        ErrorResponse.error(response, HttpStatus.UNAUTHORIZED, ErrorCode.METHOD_NOT_ALLOWED);
     }
 
 }

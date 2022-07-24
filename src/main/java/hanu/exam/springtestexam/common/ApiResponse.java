@@ -23,6 +23,7 @@ public class ApiResponse {
     private int code = ApiResponseCode.SUCCESS.getCode();
     private String msg = ApiResponseCode.SUCCESS.getMessage();
 
+    //TODO: error 기능은 제거하자. ErrorResponse 가 해당 기능을 처리할 예정
 
     public static ApiResponse error(ApiResponseCode apiResponseCode) {
         return new ApiResponse(apiResponseCode.getCode(), apiResponseCode.getMessage());

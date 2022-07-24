@@ -1,11 +1,18 @@
 package hanu.exam.springtestexam.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 //TODO: 해당응답이 발생시 해당 내용을 취합해서 aws의 클라우드와치에 전달하거나 별도의 에러응답 로그를 생성해도 될것 같다.
 @Getter
@@ -41,6 +48,43 @@ public class ErrorResponse {
                 .path(path)
                 .errors(new ArrayList<>())
                 .build();
+    }
+
+    public static ErrorResponse of(ErrorCode errorCode, String path) {
+        return ErrorResponse.builder()
+                .timestamp(sdf.format(System.currentTimeMillis()))
+                .code(errorCode.getCode())
+                .status(errorCode.getStatus())
+                .message(errorCode.getMessage())
+                .path(path)
+                .errors(new ArrayList<>())
+                .build();
+    }
+
+    public static void error(ServletResponse response, HttpStatus httpStatus, ErrorCode errorCode, String path) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.setStatus(httpStatus.value());
+        httpServletResponse
+                .getWriter().
+                write(Objects.requireNonNull(
+                                objectMapper.writeValueAsString(ErrorResponse.of(errorCode, path)))
+                );
+    }
+
+    public static void error(ServletResponse response, HttpStatus httpStatus, ErrorCode errorCode) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.setStatus(httpStatus.value());
+        httpServletResponse
+                .getWriter().
+                write(Objects.requireNonNull(
+                        objectMapper.writeValueAsString(ErrorResponse.of(errorCode, "")))
+                );
     }
 
 

@@ -2,12 +2,18 @@ package hanu.exam.springtestexam.security.filter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hanu.exam.springtestexam.common.ErrorCode;
+import hanu.exam.springtestexam.exception.auth.InvalidLoginInfoException;
+import hanu.exam.springtestexam.security.dto.LoginReqDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +26,8 @@ import java.util.Map;
  */
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+    private static final Logger log = LoggerFactory.getLogger(CustomAuthenticationFilter.class);
+
     private final ObjectMapper objectMapper;
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper) {
@@ -30,32 +38,41 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
+
         if (!request.getMethod().equalsIgnoreCase("POST")) {
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
         }
 
-        String username;
-        String password;
+        LoginReqDto loginDTO = checkLoginParam(request);
 
+        //TODO:삭제해야 한다.
+        System.out.println("username = " + loginDTO.getUsername());
+        System.out.println("password = " + loginDTO.getPassword());
+
+        //실제 해당 로그인 정보가 유효한지는 Authentication Provider manager에게 위임한다.
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
+        return this.getAuthenticationManager().authenticate(authenticationToken);
+    }
+
+    /**
+     * 로그인 파라미터가 형식상 유효한지만 검사한다.
+     */
+    private LoginReqDto checkLoginParam(HttpServletRequest request){
+
+        LoginReqDto loginReqDto = null;
         try {
-            TypeReference<Map<String, Object>> ref = new TypeReference<Map<String, Object>>() {};
-            Map<String, Object> requestMap = objectMapper.readValue(request.getInputStream(), ref);
-            username = requestMap.get("username").toString();
-            password = requestMap.get("password").toString();
-
+            loginReqDto = objectMapper.readValue(request.getInputStream(), LoginReqDto.class);
         } catch (IOException e) {
-            //TODO: username, password가 필수 입력값 이라는 응답을 명시적으로 해줄 필요가 있다.
-            e.printStackTrace();
-            throw new AuthenticationServiceException(e.getMessage(), e);
-            // TODO: badRequestException을 만들어서 던지자
-            // TODO: 아니면 여기서 예외를 던지지 말고 뒤에 authenticate에서 일괄적으로 처리하는것도 방법일 수 있겠다.
+            throw new InvalidLoginInfoException(ErrorCode.LOGIN_INPUT_INVALID);
         }
 
-        System.out.println("username = " + username);
-        System.out.println("password = " + password);
+        if(!StringUtils.hasText(loginReqDto.getUsername()) ||
+        !StringUtils.hasText(loginReqDto.getPassword())){
+            throw new InvalidLoginInfoException(ErrorCode.LOGIN_INPUT_INVALID);
+        }
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-        return this.getAuthenticationManager().authenticate(authenticationToken);
+        //MEMO: 추가적인 username 형식검사나, 패스워드 페턴검사를 할 수도 있다.
+        return loginReqDto;
     }
 
 }

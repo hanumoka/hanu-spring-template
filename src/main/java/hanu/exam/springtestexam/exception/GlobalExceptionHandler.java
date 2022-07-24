@@ -37,7 +37,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleBusinessException(final BusinessException e,
                                                                     HandlerMethod handlerMethod,
                                                                     HttpServletRequest request) {
-        log.error("handleEntityNotFoundException", e);
+        log.warn("handleEntityNotFoundException", e);
         String controllerName = handlerMethod.getMethod().getDeclaringClass().getSimpleName();
         String methodName = handlerMethod.getMethod().getName();
         String path = request.getRequestURI();
