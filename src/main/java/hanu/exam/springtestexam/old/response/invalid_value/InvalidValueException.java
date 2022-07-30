@@ -1,4 +1,4 @@
-package hanu.exam.springtestexam.exception.invalid_value;
+package hanu.exam.springtestexam.old.response.invalid_value;
 
 import hanu.exam.springtestexam.common.ErrorCode;
 import hanu.exam.springtestexam.exception.BusinessException;

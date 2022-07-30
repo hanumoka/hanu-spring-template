@@ -2,6 +2,7 @@ package hanu.exam.springtestexam.security;
 
 import hanu.exam.springtestexam.security.token.CustomAuthenticationToken;
 import hanu.exam.springtestexam.security.service.AccountContext;
+import hanu.exam.springtestexam.security.token.ReissueRequestToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -44,6 +45,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
         if(authentication instanceof CustomAuthenticationToken){
             log.info("jwt 토큰을 이용한 request의 인증 요청...");
+            // 접근권함 검사등..
         }else if(authentication instanceof UsernamePasswordAuthenticationToken){
             log.info("/login 엔드포인트의 로그인 요청...");
             String password = (String)authentication.getCredentials();
@@ -51,6 +53,11 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
                 //패스워드 검증
                 throw new BadCredentialsException("BadCredentialsException");
             }
+        }else if(authentication instanceof ReissueRequestToken){
+            log.info("토큰 재발행 요청 확인...");
+        }
+        else{
+            log.info("토큰이 없는 요청 => 익명사용자의 요청");
         }
 
         // 패스워드 말고도 필요한 검증을 이곳에서 처리하면 된다.
@@ -81,6 +88,12 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
          */
         if(CustomAuthenticationToken.class.isAssignableFrom(authentication)) return true;
 
+        /**
+         * 토큰 재발행 요청
+         */
+        if(ReissueRequestToken.class.isAssignableFrom(authentication)) return true;
+
+        //TODO:흠. 익명사용자의 요청도 검사하려면 무조건 true로 리턴해야 할것 같다.
         return false;
 
     }

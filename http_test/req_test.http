@@ -45,6 +45,10 @@ Authorization: Bearer {{access_token}}
 POST http://localhost:8080/reissue
 Authorization: Bearer {{access_token}}
 
+{
+  "refreshToken": "test99"
+}
+
 > {%
     client.test("Request executed successfully", function() {
         client.assert(response.status === 201, "Response status is not 200");

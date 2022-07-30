@@ -24,6 +24,7 @@ import java.io.IOException;
 @Component
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
+
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
@@ -31,6 +32,8 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
         /**
          * 이곳에서 401 응답을 만들면 된다.
          */
+        //TODO: CustomAuthrizationFilter에서 던진 예외정보를 받을수가 없다????
+        // https://www.baeldung.com/spring-security-exceptionhandler 이걸 참고해보자.
         log.warn("AuthenticationEntryPointImpl commence");
         ErrorResponse.error(response, HttpStatus.UNAUTHORIZED, ErrorCode.JWT_EXPIRED_ACCESS_TOKEN);
     }

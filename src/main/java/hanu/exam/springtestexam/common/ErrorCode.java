@@ -12,6 +12,7 @@ public enum ErrorCode {
     //jwt
     JWT_NOT_EXPIRED_ACCESS_TOKEN(400, "J001", "Not Expired AccessToken."),
     JWT_EXPIRED_ACCESS_TOKEN(400, "J002", "Expired AccessToken."),
+    JWT_EXPIRED_REFRESH_TOKEN(400, "J003", "Expired RefreshToken."),
 
     // Common
     INVALID_INPUT_VALUE(400, "C001", "Invalid Input Value"),
@@ -21,6 +22,8 @@ public enum ErrorCode {
     // Member
     EMAIL_DUPLICATION(400, "M001", "Email is Duplication"),
     LOGIN_INPUT_INVALID(400, "M002", "Login input is invalid"),
+    REISSUE_INPUT_INVALID(400, "M003", "Reissue input is invalid"),
+    REFRESH_TOKEN_INVALID(400, "M004", "Refresh token is invalid"),
 
             ;
     private final String code;

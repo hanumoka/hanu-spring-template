@@ -1,9 +1,19 @@
 package hanu.exam.springtestexam.security.filter;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import hanu.exam.springtestexam.common.ErrorCode;
+import hanu.exam.springtestexam.exception.auth.ExpiredRefreshTokenException;
+import hanu.exam.springtestexam.exception.auth.InValidReIssueInfoException;
+import hanu.exam.springtestexam.exception.auth.InvalidLoginInfoException;
+import hanu.exam.springtestexam.exception.auth.InvalidRefreshTokenException;
+import hanu.exam.springtestexam.security.dto.LoginReqDto;
+import hanu.exam.springtestexam.security.dto.ReIssueReqDto;
 import hanu.exam.springtestexam.security.token.CustomAuthenticationToken;
 import hanu.exam.springtestexam.security.jwt.JwtTokenDto;
 import hanu.exam.springtestexam.security.jwt.JwtProvider;
+import hanu.exam.springtestexam.security.token.ReissueRequestToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,14 +35,16 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     private final String AUTHORIZATION_HEADER;
     private final String HEADER_NAME;
     private final JwtProvider jwtProvider;
+    private final ObjectMapper objectMapper;
 
     /**
      * 토큰 인증 정보를 현재 쓰레드의 SecurityContext 에 저장하는 역할 수행
      * 주의!
      * - 이 필터는 security에서 검증할 데이터를 수집하는 필터이다.(header의 accesstoken정보)
-     * - 실질적인 검증 기능을 본 필터에서 하면 안된다.
-     * - 데이터가 없다면 그냥 다음 필터체인으로 넘거야 한다.
-     * - 따라서 본 필터에서 예외를 발생시키거나 절대 직접 응답을 하면 안된다.
+     * - 실질적인 검증 기능을 본 필터에서 하면 안된다. => AuthenticationProviderImpl에게 넘기자.
+     * - DB같은 곳에 조회 같은것을 하지 말자. 이녀석은 문지기
+     * 주된 처리
+     * -
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -44,19 +56,45 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(jwt)) {
 
             JwtTokenDto jwtTokenDto;
-            //토큰의 유효성 검사
-            jwtTokenDto = jwtProvider.validateAccessToken(jwt);
 
-            logger.info("CustomAuthorizationFilter token username:" + jwtTokenDto.getUsername());
-            logger.info("CustomAuthorizationFilter token userId:" + jwtTokenDto.getUserId());
+            try{
+                //토큰의 유효성 검사
+                jwtTokenDto = jwtProvider.validateAccessToken(jwt);
 
-            // 유효한 토큰인 경우 사용자 정보 및 권한(현재없음)을 조회하여 securityContext에 정보를 저장한다.
+                // 토큰으로 인증 정보를 추출
+                Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                Authentication authentication = new CustomAuthenticationToken(jwtTokenDto.getUserId(), jwtTokenDto.getUsername(), authorities);
+                // SecurityContext에 저장
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }catch(TokenExpiredException tee){
+                logger.info("accessToken 만료됨...");
 
-            // 토큰으로 인증 정보를 추출
-            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            Authentication authentication = new CustomAuthenticationToken(jwtTokenDto.getUserId(), jwtTokenDto.getUsername(), authorities);
-            // SecurityContext에 저장
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                /**
+                 * 토큰 재발행 요청인경우
+                 * - POST
+                 * - uri : /reissue
+                 * - request_body
+                 *  - refreshToken: 리프레쉬 토큰이 있고 이 토큰이 유요현경우
+                 */
+
+                //1.요청 URI가 /reissue 인경우 패스
+                if("/reissue".equals(request.getRequestURI())
+                        && "POST".equals(request.getMethod())){
+                    logger.info("토큰 재발행 요청 확인...");
+                    Authentication authentication = resolveAndValidateRefreshToken(request);
+
+                    // SecurityContext에 저장
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                }else{
+                    throw tee;
+                }
+
+            } catch(Exception e){
+                logger.info("jwt 벨리데이션 예외발생");
+                throw e;
+            } // catch
+
         }
 
         filterChain.doFilter(request, response);
@@ -71,6 +109,36 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    /**
+     * Request에서 RefreshToken 추출
+     */
+    private ReissueRequestToken resolveAndValidateRefreshToken(HttpServletRequest request){
+
+        ReIssueReqDto reIssueReqDto = null;
+        try {
+            reIssueReqDto = objectMapper.readValue(request.getInputStream(), ReIssueReqDto.class);
+            logger.info("refreshToken:"+ reIssueReqDto.getRefreshToken());
+            JwtTokenDto jwtTokenDto = jwtProvider.validateRefreshToken(reIssueReqDto.getRefreshToken());
+//            logger.info("jwtTokenDto1:"+ jwtTokenDto1.toString());
+            return ReissueRequestToken.builder()
+                    .username(jwtTokenDto.getUsername())
+                    .userId(jwtTokenDto.getUserId())
+                    .refreshToken(reIssueReqDto.getRefreshToken())
+                    .build();
+        } catch (IOException e) {
+            //리프레시토큰이 요청파라미터가 잘못됨 => 405
+            throw new InValidReIssueInfoException(ErrorCode.REISSUE_INPUT_INVALID);
+        }catch(TokenExpiredException e2){
+          // 리프레시토큰이 만료된 경우 => 로그아웃 처리 401 응답
+            throw new ExpiredRefreshTokenException(ErrorCode.JWT_EXPIRED_ACCESS_TOKEN);
+        } catch(JWTVerificationException e3){
+            //형식이 잘못된 리프레시토큰 => 401
+//            throw new InvalidRefreshTokenException(ErrorCode.REFRESH_TOKEN_INVALID);
+            throw new RuntimeException("test");
+        }
+
     }
 
 }

@@ -69,7 +69,7 @@ public class WebSecurityConfig {
 
     @Bean
     public CustomAuthorizationFilter customAuthorizationFilter() {
-        return new CustomAuthorizationFilter(AUTHORIZATION_HEADER, HEADER_NAME, jwtProvider);
+        return new CustomAuthorizationFilter(AUTHORIZATION_HEADER, HEADER_NAME, jwtProvider, objectMapper);
     }
 
     @Bean

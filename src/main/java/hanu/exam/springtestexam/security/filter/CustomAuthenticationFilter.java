@@ -18,7 +18,6 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * 주의 로그인 실패시 : AuthenticationServiceException 를 던저야
@@ -45,9 +44,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         LoginReqDto loginDTO = checkLoginParam(request);
 
-        //TODO:삭제해야 한다.
-        System.out.println("username = " + loginDTO.getUsername());
-        System.out.println("password = " + loginDTO.getPassword());
+        //TODO: 삭제해야한다.
+        log.debug("username = " + loginDTO.getUsername());
+        log.debug("password = " + loginDTO.getPassword());
 
         //실제 해당 로그인 정보가 유효한지는 Authentication Provider manager에게 위임한다.
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
