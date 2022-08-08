@@ -33,8 +33,9 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
          * 이곳에서 401 응답을 만들면 된다.
          */
         //TODO: CustomAuthrizationFilter에서 던진 예외정보를 받을수가 없다????
-        // https://www.baeldung.com/spring-security-exceptionhandler 이걸 참고해보자.
         log.warn("AuthenticationEntryPointImpl commence");
+        // TODO: 아예 이걸 쓰지 말고 CustomAuthrizationFilter에서ㅇ 직접 응답하는 것도 방법일듯
+        // 이녀석을 쓰면 이전에서 생성된 예외를 받을 수가 없다.
         ErrorResponse.error(response, HttpStatus.UNAUTHORIZED, ErrorCode.JWT_EXPIRED_ACCESS_TOKEN);
     }
 }

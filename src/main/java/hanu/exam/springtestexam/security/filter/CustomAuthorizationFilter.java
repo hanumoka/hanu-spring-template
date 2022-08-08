@@ -28,6 +28,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RequiredArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
@@ -76,12 +81,11 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                  * - request_body
                  *  - refreshToken: 리프레쉬 토큰이 있고 이 토큰이 유요현경우
                  */
-
                 //1.요청 URI가 /reissue 인경우 패스
                 if("/reissue".equals(request.getRequestURI())
                         && "POST".equals(request.getMethod())){
                     logger.info("토큰 재발행 요청 확인...");
-                    Authentication authentication = resolveAndValidateRefreshToken(request);
+                    Authentication authentication = resolveAndValidateRefreshToken(request, response);
 
                     // SecurityContext에 저장
                     SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -91,7 +95,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 }
 
             } catch(Exception e){
-                logger.info("jwt 벨리데이션 예외발생");
+                logger.info("accessToken 벨리데이션 예외발생");
                 throw e;
             } // catch
 
@@ -114,7 +118,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     /**
      * Request에서 RefreshToken 추출
      */
-    private ReissueRequestToken resolveAndValidateRefreshToken(HttpServletRequest request){
+    private ReissueRequestToken resolveAndValidateRefreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         ReIssueReqDto reIssueReqDto = null;
         try {
@@ -135,9 +139,17 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             throw new ExpiredRefreshTokenException(ErrorCode.JWT_EXPIRED_ACCESS_TOKEN);
         } catch(JWTVerificationException e3){
             //형식이 잘못된 리프레시토큰 => 401
+            response.setStatus(UNAUTHORIZED.value());
+            Map<String, String> error = new HashMap<>();
+            error.put("error_message", "리프레시토큰 벨리데이션 오류");
+            response.setContentType(APPLICATION_JSON_VALUE);
+//            jwtCookieProvider.deleteCookie(response);
+            new ObjectMapper().writeValue(response.getOutputStream(), error);
 //            throw new InvalidRefreshTokenException(ErrorCode.REFRESH_TOKEN_INVALID);
-            throw new RuntimeException("test");
+
         }
+
+        return null;
 
     }
 

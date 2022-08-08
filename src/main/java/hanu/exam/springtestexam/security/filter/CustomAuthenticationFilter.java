@@ -1,6 +1,5 @@
 package hanu.exam.springtestexam.security.filter;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hanu.exam.springtestexam.common.ErrorCode;
 import hanu.exam.springtestexam.exception.auth.InvalidLoginInfoException;
