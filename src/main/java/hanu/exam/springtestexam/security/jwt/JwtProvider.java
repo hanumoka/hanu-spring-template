@@ -4,8 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +15,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -39,6 +36,7 @@ public class JwtProvider {
     @PostConstruct
     protected void init() {
         ACCESS_TOKEN_SECRET_KEY = Base64.getEncoder().encodeToString(ACCESS_TOKEN_SECRET_KEY.getBytes());
+        REFRESH_TOKEN_SECRET_KEY = Base64.getEncoder().encodeToString(REFRESH_TOKEN_SECRET_KEY.getBytes());
     }
 
     public String createAccessToken(Long userId, String username, String issuer) {
@@ -79,7 +77,10 @@ public class JwtProvider {
         decodedJWT = verifier.verify(token);
         Claim claim = decodedJWT.getClaim("username");
         //SignatureVerificationException
-        return jwtTokenDto = new JwtTokenDto(Long.valueOf(decodedJWT.getSubject()), decodedJWT.getClaim("username").asString());
+        return new JwtTokenDto(
+                Long.valueOf(decodedJWT.getSubject())
+                , decodedJWT.getClaim("username").asString()
+        );
     }
 
     public JwtTokenDto validateRefreshToken(String refreshToken) {

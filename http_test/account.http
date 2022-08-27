@@ -13,6 +13,7 @@ client.test("Request executed successfully", function() {
     });
 client.log(response.body.result.accessToken);
 client.global.set("access_token", response.body.result.accessToken);
+client.global.set("refresh_token", response.body.result.refreshToken);
 %}
 
 ### 회원가입
@@ -43,10 +44,11 @@ Authorization: Bearer {{access_token}}
 
 ### 토큰재발급요청
 POST http://localhost:8080/reissue
+Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
 {
-  "refreshToken": "test99"
+  "refreshToken": {{refresh_token}}
 }
 
 > {%

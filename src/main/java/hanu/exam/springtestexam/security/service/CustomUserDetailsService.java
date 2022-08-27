@@ -36,7 +36,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 //        roles.add(new SimpleGrantedAuthority(account.getRole()));  // 권한은 없으니 주석처리
 
         // AccountContext -> User -> UserDetails 구현체
-
         return new AccountContext(opAccount.get(), roles);  // --> AuthenticationProvider에서 해당 리턴값을 받아 추가검증을 진행한다.
     }
 }

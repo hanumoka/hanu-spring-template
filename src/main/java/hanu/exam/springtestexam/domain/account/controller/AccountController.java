@@ -1,14 +1,11 @@
 package hanu.exam.springtestexam.domain.account.controller;
 
 import hanu.exam.springtestexam.common.ApiResponse;
-import hanu.exam.springtestexam.common.ErrorCode;
 import hanu.exam.springtestexam.domain.account.dto.UserJoinDTO;
 import hanu.exam.springtestexam.domain.account.service.AccountService;
-import hanu.exam.springtestexam.exception.auth.NotExpiredAccessTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -17,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     private final AccountService accountService;
-
-//    private final JwtProvider jwtProvider;
 
     @PostMapping(name = "회원가입", value = "/signup")
     public ApiResponse join(@RequestBody UserJoinDTO userJoinDTO) {

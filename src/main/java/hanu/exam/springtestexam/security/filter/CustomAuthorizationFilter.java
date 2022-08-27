@@ -6,15 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hanu.exam.springtestexam.common.ErrorCode;
 import hanu.exam.springtestexam.exception.auth.ExpiredRefreshTokenException;
 import hanu.exam.springtestexam.exception.auth.InValidReIssueInfoException;
-import hanu.exam.springtestexam.exception.auth.InvalidLoginInfoException;
-import hanu.exam.springtestexam.exception.auth.InvalidRefreshTokenException;
-import hanu.exam.springtestexam.security.dto.LoginReqDto;
 import hanu.exam.springtestexam.security.dto.ReIssueReqDto;
 import hanu.exam.springtestexam.security.token.CustomAuthenticationToken;
 import hanu.exam.springtestexam.security.jwt.JwtTokenDto;
 import hanu.exam.springtestexam.security.jwt.JwtProvider;
 import hanu.exam.springtestexam.security.token.ReissueRequestToken;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +32,7 @@ import java.util.Map;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Slf4j
 @RequiredArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
@@ -74,25 +73,22 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             }catch(TokenExpiredException tee){
                 logger.info("accessToken 만료됨...");
 
-                /**
-                 * 토큰 재발행 요청인경우
-                 * - POST
-                 * - uri : /reissue
-                 * - request_body
-                 *  - refreshToken: 리프레쉬 토큰이 있고 이 토큰이 유요현경우
-                 */
+
+                //TODO: 리프레시 토큰 존재하는지 확인
+//                resolveRefreshToken(request);
+
                 //1.요청 URI가 /reissue 인경우 패스
-                if("/reissue".equals(request.getRequestURI())
-                        && "POST".equals(request.getMethod())){
-                    logger.info("토큰 재발행 요청 확인...");
-                    Authentication authentication = resolveAndValidateRefreshToken(request, response);
-
-                    // SecurityContext에 저장
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                }else{
-                    throw tee;
-                }
+//                if("/reissue".equals(request.getRequestURI())
+//                        && "POST".equals(request.getMethod())){
+//                    logger.info("토큰 재발행 요청 확인...");
+//                    Authentication authentication = resolveAndValidateRefreshToken(request, response);
+//
+//                    // SecurityContext에 저장
+//                    SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//                }else{
+//                    throw tee;
+//                }
 
             } catch(Exception e){
                 logger.info("accessToken 벨리데이션 예외발생");
@@ -105,7 +101,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Request Header에서 토큰 추출
+     * Request Header에서 accessToken 토큰 추출
      */
     private String resolveAccessToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
@@ -116,41 +112,50 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     }
 
     /**
+     * Request에서 refreshToken 추출
+     *
+     * - POST
+     * - URI: /accesstoken
+     */
+    private String resolveRefreshToken(HttpServletRequest request){
+        log.info("resolveRefreshToken start--->");
+        String refreshToken = null;
+        return refreshToken;
+    }
+
+    /**
      * Request에서 RefreshToken 추출
      */
-    private ReissueRequestToken resolveAndValidateRefreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        ReIssueReqDto reIssueReqDto = null;
-        try {
-            reIssueReqDto = objectMapper.readValue(request.getInputStream(), ReIssueReqDto.class);
-            logger.info("refreshToken:"+ reIssueReqDto.getRefreshToken());
-            JwtTokenDto jwtTokenDto = jwtProvider.validateRefreshToken(reIssueReqDto.getRefreshToken());
-//            logger.info("jwtTokenDto1:"+ jwtTokenDto1.toString());
-            return ReissueRequestToken.builder()
-                    .username(jwtTokenDto.getUsername())
-                    .userId(jwtTokenDto.getUserId())
-                    .refreshToken(reIssueReqDto.getRefreshToken())
-                    .build();
-        } catch (IOException e) {
-            //리프레시토큰이 요청파라미터가 잘못됨 => 405
-            throw new InValidReIssueInfoException(ErrorCode.REISSUE_INPUT_INVALID);
-        }catch(TokenExpiredException e2){
-          // 리프레시토큰이 만료된 경우 => 로그아웃 처리 401 응답
-            throw new ExpiredRefreshTokenException(ErrorCode.JWT_EXPIRED_ACCESS_TOKEN);
-        } catch(JWTVerificationException e3){
-            //형식이 잘못된 리프레시토큰 => 401
-            response.setStatus(UNAUTHORIZED.value());
-            Map<String, String> error = new HashMap<>();
-            error.put("error_message", "리프레시토큰 벨리데이션 오류");
-            response.setContentType(APPLICATION_JSON_VALUE);
-//            jwtCookieProvider.deleteCookie(response);
-            new ObjectMapper().writeValue(response.getOutputStream(), error);
-//            throw new InvalidRefreshTokenException(ErrorCode.REFRESH_TOKEN_INVALID);
-
-        }
-
-        return null;
-
-    }
+//    private ReissueRequestToken resolveAndValidateRefreshToken(HttpServletRequest request, HttpServletResponse response)
+//            throws IOException {
+//
+//        ReIssueReqDto reIssueReqDto = null;
+//        try {
+//            reIssueReqDto = objectMapper.readValue(request.getInputStream(), ReIssueReqDto.class);
+//            logger.info("refreshToken:"+ reIssueReqDto.getRefreshToken());
+//            JwtTokenDto jwtTokenDto = jwtProvider.validateRefreshToken(reIssueReqDto.getRefreshToken());
+//            return ReissueRequestToken.builder()
+//                    .username(jwtTokenDto.getUsername())
+//                    .userId(jwtTokenDto.getUserId())
+//                    .refreshToken(reIssueReqDto.getRefreshToken())
+//                    .build();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            //리프레시토큰이 요청파라미터가 잘못됨 => 405
+//            throw new InValidReIssueInfoException(ErrorCode.REISSUE_INPUT_INVALID);
+//        }catch(TokenExpiredException e2){
+//          // 리프레시토큰이 만료된 경우 => 로그아웃 처리 401 응답
+//            log.warn("리프레시 토큰 만료");
+//            throw new ExpiredRefreshTokenException(ErrorCode.JWT_EXPIRED_ACCESS_TOKEN);
+//        } catch(JWTVerificationException e3){
+//            //형식이 잘못된 리프레시토큰 => 401
+//            response.setStatus(UNAUTHORIZED.value());
+//            Map<String, String> error = new HashMap<>();
+//            error.put("error_message", "리프레시토큰 벨리데이션 오류");
+//            response.setContentType(APPLICATION_JSON_VALUE);
+//            new ObjectMapper().writeValue(response.getOutputStream(), error);
+//        }
+//        return null;
+//    }
 
 }

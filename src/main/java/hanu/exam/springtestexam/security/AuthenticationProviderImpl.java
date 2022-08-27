@@ -6,7 +6,6 @@ import hanu.exam.springtestexam.security.token.ReissueRequestToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -92,7 +91,6 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
          * 토큰 재발행 요청
          */
         if(ReissueRequestToken.class.isAssignableFrom(authentication)) return true;
-
         //TODO:흠. 익명사용자의 요청도 검사하려면 무조건 true로 리턴해야 할것 같다.
         return false;
 

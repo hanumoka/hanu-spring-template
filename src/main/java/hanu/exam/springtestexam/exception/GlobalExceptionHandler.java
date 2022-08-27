@@ -2,6 +2,7 @@ package hanu.exam.springtestexam.exception;
 
 import hanu.exam.springtestexam.common.ErrorCode;
 import hanu.exam.springtestexam.common.ErrorResponse;
+import hanu.exam.springtestexam.exception.auth.CustomAuthException;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleException(Exception e,
                                                             HandlerMethod handlerMethod,
                                                             HttpServletRequest request) {
-        log.error("handleEntityNotFoundException", e);
+        log.error("handleException", e);
+        String controllerName = handlerMethod.getMethod().getDeclaringClass().getSimpleName();
+        String methodName = handlerMethod.getMethod().getName();
+        String path = request.getRequestURI();
+
+        final ErrorResponse response = ErrorResponse
+                .of(ErrorCode.INTERNAL_SERVER_ERROR, controllerName, methodName, path);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(CustomAuthException.class)
+    protected ResponseEntity<ErrorResponse> handleCustomAuthException(CustomAuthException e,
+                                                            HandlerMethod handlerMethod,
+                                                            HttpServletRequest request) {
+        log.error("handleCustomAuthException", e);
         String controllerName = handlerMethod.getMethod().getDeclaringClass().getSimpleName();
         String methodName = handlerMethod.getMethod().getName();
         String path = request.getRequestURI();
@@ -37,7 +52,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleBusinessException(final BusinessException e,
                                                                     HandlerMethod handlerMethod,
                                                                     HttpServletRequest request) {
-        log.warn("handleEntityNotFoundException", e);
+        log.warn("handleBusinessException", e);
         String controllerName = handlerMethod.getMethod().getDeclaringClass().getSimpleName();
         String methodName = handlerMethod.getMethod().getName();
         String path = request.getRequestURI();
