@@ -22,7 +22,6 @@ public class AccountController {
     }
 
     //TODO: 로그인은 security에서 필터로처리, but swagger를 위한 가짜 컨트롤러는 필요할듯
-
     @GetMapping(name="사용자가 자신의 정보 조회", value ="/account")
     public ApiResponse getMyAccountInfo(){
         log.info("getMyAccountInfo...");

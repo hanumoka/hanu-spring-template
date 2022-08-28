@@ -29,7 +29,9 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
     private final JwtProvider jwtProvider;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        Authentication authentication) throws IOException {
         // 전달받은 인증정보 SecurityContextHolder에 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

@@ -27,7 +27,7 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
         /**
          * 이곳에서 403 응답을 만들면 된다.
          */
-        log.warn("AccessDeniedHandlerImpl hanlde...");
+        log.warn("AccessDeniedHandlerImpl handle...");
 //        ApiResponse.error(response, HttpStatus.UNAUTHORIZED, ApiResponseCode.UNAUTHORIZED_RESPONSE);
         ErrorResponse.error(response, HttpStatus.UNAUTHORIZED, ErrorCode.METHOD_NOT_ALLOWED);
     }

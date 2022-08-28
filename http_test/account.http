@@ -13,7 +13,7 @@ client.test("Request executed successfully", function() {
     });
 client.log(response.body.result.accessToken);
 client.global.set("access_token", response.body.result.accessToken);
-client.global.set("refresh_token", response.body.result.refreshToken);
+// client.global.set("refresh_token", response.body.result.refreshToken);
 %}
 
 ### 회원가입

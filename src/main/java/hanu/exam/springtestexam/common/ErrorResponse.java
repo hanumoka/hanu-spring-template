@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Objects;
 
 //TODO: 해당응답이 발생시 해당 내용을 취합해서 aws의 클라우드와치에 전달하거나 별도의 에러응답 로그를 생성해도 될것 같다.
+
+/**
+ * 정상적인 응답이 아닌 응답을 처리하는 클래스
+ */
 @Getter
 @Builder
 @AllArgsConstructor
