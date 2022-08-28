@@ -1,6 +1,7 @@
 package hanu.exam.spring_template.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hanu.exam.spring_template.config.SecurityPermitAllConfig;
 import hanu.exam.spring_template.security.filter.CustomAuthorizationFilter;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,8 @@ public class SecurityConfig {
     @Value("${hanu.jwt.header-name}")
     private String HEADER_NAME;
 
+    private final SecurityPermitAllConfig securityPermitAllConfig;
+
 
     // JWT 제공 클래스
     private final JwtProvider jwtProvider;
@@ -74,14 +77,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         // GET 화이트리스트
-        final String[] GET_WHITELIST = new String[]{
+//        final String[] GET_WHITELIST = new String[]{
 //                "/api/account/test",
-        };
+//        };
 
         // POST 화이트리스트
-        final String[] POST_WHITELIST = new String[]{
+//        final String[] POST_WHITELIST = new String[]{
 //                "/api/account/test",
-        };
+//        };
 
         //jwt 토큰방식 적용을 위한 기초 설정
         http.cors().configurationSource(corsConfigurationSource())
@@ -94,8 +97,10 @@ public class SecurityConfig {
 
         // 특정 도메인 security 허용
         http.authorizeRequests()
-                .antMatchers(HttpMethod.GET, GET_WHITELIST).permitAll()
-                .antMatchers(HttpMethod.POST, POST_WHITELIST).permitAll()
+                .antMatchers(HttpMethod.GET,
+                        securityPermitAllConfig.getGetList().toArray(new String[0])).permitAll()
+                .antMatchers(HttpMethod.POST,
+                        securityPermitAllConfig.getPostList().toArray(new String[0])).permitAll()
 
         ;
 

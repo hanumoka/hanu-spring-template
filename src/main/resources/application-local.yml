@@ -67,7 +67,11 @@ hanu:
     refresh-token:
       secret-key: sebure-refresh-key-20220712
       expire-length: 150000
-#  access-token-expire-length: 1000000
-#  refresh-token-expire-length: 2000000
+  security:
+    permit-all:
+      getList:
+        - /api/account/test
+      postList:
+        - /api/account/test
 
 
