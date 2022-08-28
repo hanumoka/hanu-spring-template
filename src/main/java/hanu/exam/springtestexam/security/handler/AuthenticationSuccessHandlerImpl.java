@@ -1,6 +1,7 @@
 package hanu.exam.springtestexam.security.handler;
 
 import hanu.exam.springtestexam.common.ApiResponse;
+import hanu.exam.springtestexam.common.HttpUtil;
 import hanu.exam.springtestexam.security.token.CustomAuthenticationToken;
 import hanu.exam.springtestexam.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +29,14 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
     private final JwtProvider jwtProvider;
 
+    @Value("${jwt.refresh-token.expire-length}")
+    private long REFRESH_VALIDITY_IN_MILLISECONDS;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
-        // 전달받은 인증정보 SecurityContextHolder에 저장
+        // 전달받은 인증정보 SecurityContextHolder 에 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         CustomAuthenticationToken customAuthenticationToken = (CustomAuthenticationToken) authentication;
@@ -53,7 +57,9 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
                 , customAuthenticationToken.getUsername()
                 , serviceName);
 
-        ApiResponse.token(response, accessToken, refreshToken);
+        HttpUtil.setRefreshTokenCookie(response, refreshToken, REFRESH_VALIDITY_IN_MILLISECONDS / 1000);
+
+        ApiResponse.accessToken(response, accessToken);
     }
 
 }

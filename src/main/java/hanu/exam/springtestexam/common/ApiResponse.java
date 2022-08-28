@@ -25,7 +25,7 @@ public class ApiResponse {
     private String msg = ApiResponseCode.SUCCESS.getMessage();
 
     //security에서 토큰 발행 응답용
-    public static void token(ServletResponse response, String accessToken, String refreshToken) throws IOException {
+    public static void accessToken(ServletResponse response, String accessToken) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -33,8 +33,6 @@ public class ApiResponse {
         httpServletResponse.setStatus(ApiResponseCode.SUCCESS.getCode());
         Map<String, String> tokenMap = new HashMap<>();
         tokenMap.put("accessToken", accessToken);
-
-        // tokenMap.put("refreshToken", refreshToken); // 리프레시토큰은 쿠키에 저장
 
         httpServletResponse.getWriter()
                 .write(Objects.requireNonNull(

@@ -1,7 +1,5 @@
 package hanu.exam.springtestexam.security.handler;
 
-import hanu.exam.springtestexam.common.ApiResponse;
-import hanu.exam.springtestexam.common.ApiResponseCode;
 import hanu.exam.springtestexam.common.ErrorCode;
 import hanu.exam.springtestexam.common.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;

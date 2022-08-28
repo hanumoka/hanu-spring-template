@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hanu.exam.springtestexam.common.ErrorCode;
 import hanu.exam.springtestexam.exception.auth.InvalidLoginInfoException;
 import hanu.exam.springtestexam.security.dto.LoginReqDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,9 +21,8 @@ import java.io.IOException;
  * 주의 로그인 실패시 : AuthenticationServiceException 를 던저야
  * AuthenticationFailureHandlerImpl 가 동작한다.
  */
+@Slf4j
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-
-    private static final Logger log = LoggerFactory.getLogger(CustomAuthenticationFilter.class);
 
     private final ObjectMapper objectMapper;
 
