@@ -34,9 +34,9 @@ import static hanu.exam.spring_template.security.AuthCustomDsl.customDsl;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    @Value("${jwt.authorization-header}")
+    @Value("${hanu.jwt.authorization-header}")
     private String AUTHORIZATION_HEADER;
-    @Value("${jwt.header-name}")
+    @Value("${hanu.jwt.header-name}")
     private String HEADER_NAME;
 
 

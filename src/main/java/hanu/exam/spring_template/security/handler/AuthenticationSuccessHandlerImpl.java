@@ -29,7 +29,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
     private final JwtProvider jwtProvider;
 
-    @Value("${jwt.refresh-token.expire-length}")
+    @Value("${hanu.jwt.refresh-token.expire-length}")
     private long REFRESH_VALIDITY_IN_MILLISECONDS;
 
     @Override

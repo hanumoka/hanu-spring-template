@@ -21,16 +21,16 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtProvider {
 
-    @Value("${jwt.access-token.secret-key}")
+    @Value("${hanu.jwt.access-token.secret-key}")
     private String ACCESS_TOKEN_SECRET_KEY;
 
-    @Value("${jwt.refresh-token.secret-key}")
+    @Value("${hanu.jwt.refresh-token.secret-key}")
     private String REFRESH_TOKEN_SECRET_KEY;
 
-    @Value("${jwt.access-token.expire-length}")
+    @Value("${hanu.jwt.access-token.expire-length}")
     private long ACCESS_VALIDITY_IN_MILLISECONDS;
 
-    @Value("${jwt.refresh-token.expire-length}")
+    @Value("${hanu.jwt.refresh-token.expire-length}")
     private long REFRESH_VALIDITY_IN_MILLISECONDS;
 
     @PostConstruct

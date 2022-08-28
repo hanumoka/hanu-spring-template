@@ -57,15 +57,16 @@ decorator:
     p6spy:
       enable-logging: true
 
-jwt:
-  authorization-header: Authorization
-  header-name: Bearer
-  access-token:
-    secret-key: sebure-access-key-20220712
-    expire-length: 50000
-  refresh-token:
-    secret-key: sebure-refresh-key-20220712
-    expire-length: 150000
+hanu:
+  jwt:
+    authorization-header: Authorization
+    header-name: Bearer
+    access-token:
+      secret-key: sebure-access-key-20220712
+      expire-length: 50000
+    refresh-token:
+      secret-key: sebure-refresh-key-20220712
+      expire-length: 150000
 #  access-token-expire-length: 1000000
 #  refresh-token-expire-length: 2000000
 
