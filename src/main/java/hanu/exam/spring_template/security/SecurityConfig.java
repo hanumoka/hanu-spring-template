@@ -32,7 +32,7 @@ import static hanu.exam.spring_template.security.AuthCustomDsl.customDsl;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class WebSecurityConfig {
+public class SecurityConfig {
 
     @Value("${hanu.jwt.authorization-header}")
     private String AUTHORIZATION_HEADER;
@@ -75,10 +75,12 @@ public class WebSecurityConfig {
 
         // GET 화이트리스트
         final String[] GET_WHITELIST = new String[]{
+//                "/api/account/test",
         };
 
         // POST 화이트리스트
         final String[] POST_WHITELIST = new String[]{
+//                "/api/account/test",
         };
 
         //jwt 토큰방식 적용을 위한 기초 설정

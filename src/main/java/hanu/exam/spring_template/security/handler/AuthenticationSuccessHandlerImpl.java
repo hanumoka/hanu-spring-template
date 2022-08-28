@@ -50,7 +50,6 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
                 , customAuthenticationToken.getUsername()
                 , serviceName);
 
-
         // JWT Token 발급 - refreshToken
         String refreshToken = jwtProvider.createAccessToken(
                 customAuthenticationToken.getUserId()

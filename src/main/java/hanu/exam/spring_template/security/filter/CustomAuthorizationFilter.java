@@ -48,12 +48,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
         // Request Header에서 토큰 추출
         String jwt = resolveAccessToken(request);
-
         log.info("jwt:" + jwt);
 
         // AccessToken 유효성 검사
         if (StringUtils.hasText(jwt)) {
-
             JwtTokenDto jwtTokenDto;
 
             try{
@@ -80,8 +78,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 logger.info("accessToken 벨리데이션 예외발생");
                 throw e;
             } // catch
-
-        }
+        } //if
 
         filterChain.doFilter(request, response);
     }
@@ -93,7 +90,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(HEADER_NAME)) {
             return bearerToken.substring(7);
-        }
+        } //if
         return null;
     }
 
