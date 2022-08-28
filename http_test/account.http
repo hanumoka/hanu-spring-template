@@ -1,5 +1,5 @@
 ### 로그인
-POST http://{{host}}:{{port}}/login
+POST http://{{host}}:{{port}}/api/auth/login
 Content-Type: application/json
 
 {
@@ -16,6 +16,31 @@ client.global.set("access_token", response.body.result.accessToken);
 // client.global.set("refresh_token", response.body.result.refreshToken);
 %}
 
+### 자기정보조회
+GET http://localhost:8080/api/account
+Authorization: Bearer {{access_token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### test
+GET http://localhost:8080/api/account/test
+
+
+### 토큰재발급요청
+POST http://localhost:8080/api/auth/access-token
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 200");
+    });
+%}
+
 ### 회원가입
 POST http://localhost:8080/signup
 Content-Type: application/json
@@ -28,27 +53,5 @@ Content-Type: application/json
 > {%
     client.test("Request executed successfully", function() {
         client.assert(response.status === 200, "Response status is not 200");
-    });
-%}
-
-
-### 자기정보조회
-GET http://localhost:8080/account
-Authorization: Bearer {{access_token}}
-
-> {%
-    client.test("Request executed successfully", function() {
-        client.assert(response.status === 200, "Response status is not 200");
-    });
-%}
-
-### 토큰재발급요청
-POST http://localhost:8080/reissue
-Content-Type: application/json
-Authorization: Bearer {{access_token}}
-
-> {%
-    client.test("Request executed successfully", function() {
-        client.assert(response.status === 201, "Response status is not 200");
     });
 %}
