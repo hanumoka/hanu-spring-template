@@ -70,8 +70,9 @@ hanu:
   security:
     permit-all:
       getList:
-        - /api/account/test
+        - /api/v1/account/test
+        - /account/test
       postList:
-        - /api/account/test
+        - /api/v1/account/test
 
 

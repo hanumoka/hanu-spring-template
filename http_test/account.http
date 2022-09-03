@@ -17,7 +17,7 @@ client.global.set("access_token", response.body.result.accessToken);
 %}
 
 ### 자기정보조회
-GET http://localhost:8080/api/account
+GET http://localhost:8080/api/v1/account
 Authorization: Bearer {{access_token}}
 
 > {%
@@ -26,8 +26,11 @@ Authorization: Bearer {{access_token}}
     });
 %}
 
-### test
-GET http://localhost:8080/api/account/test
+### test1
+GET http://localhost:8080/api/v1/account/test
+
+### test2
+GET http://localhost:8080/account/test
 
 
 ### 토큰재발급요청

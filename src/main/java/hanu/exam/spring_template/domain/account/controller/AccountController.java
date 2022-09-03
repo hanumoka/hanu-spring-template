@@ -1,5 +1,6 @@
 package hanu.exam.spring_template.domain.account.controller;
 
+import hanu.exam.spring_template.annotation.RestControllerV1;
 import hanu.exam.spring_template.common.ApiResponse;
 import hanu.exam.spring_template.domain.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -9,18 +10,20 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
-@RestController
+@RestControllerV1
 public class AccountController {
+
+    private static final String MAIN_PATH = "/account";
 
     private final AccountService accountService;
 
-    @GetMapping(name="사용자가 자신의 정보 조회", value ="/api/account/test")
+    @GetMapping(name="사용자가 자신의 정보 조회", value =MAIN_PATH + "/test")
     public ApiResponse test(){
         log.info("test...");
         return new ApiResponse();
     }
 
-    @GetMapping(name="사용자가 자신의 정보 조회", value ="/api/account")
+    @GetMapping(name="사용자가 자신의 정보 조회", value ="/account")
     public ApiResponse getMyAccountInfo(){
         log.info("getMyAccountInfo...");
         return new ApiResponse();
@@ -48,10 +51,4 @@ public class AccountController {
 //
 //        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse());
 //    }
-
-
-    //TODO: 엑세스토큰을 재발급하는 명시적인 컨트롤러가 필요한가?
-    //TODO: 그냥 액세스토큰 검사시 엑세스토큰이 만료되면 자동으로 refresh token을 가져와서 accesstoken을 발급하면 좋지 않은가?
-    //TODO: refreshToken을 프론트에 전달하는것은 옳은가?
-    //TODO: csrf는 어떤방법으로 해결이 가능하지?
 }

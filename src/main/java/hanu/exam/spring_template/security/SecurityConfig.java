@@ -2,8 +2,7 @@ package hanu.exam.spring_template.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hanu.exam.spring_template.config.SecurityPermitAllConfig;
-import hanu.exam.spring_template.security.filter.CustomAccessTokenFilter;
-import hanu.exam.spring_template.security.filter.CustomReissueTokensFilter;
+import hanu.exam.spring_template.security.filter.CustomJwtTokenFilter;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,14 +69,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CustomAccessTokenFilter customAccessTokenFilter() {
-        return new CustomAccessTokenFilter(AUTHORIZATION_HEADER, HEADER_NAME, jwtProvider, objectMapper);
+    public CustomJwtTokenFilter customJwtTokenFilter() {
+        return new CustomJwtTokenFilter(AUTHORIZATION_HEADER, HEADER_NAME, jwtProvider, objectMapper);
     }
 
-    @Bean
-    public CustomReissueTokensFilter customReissueTokensFilter(){
-        return new CustomReissueTokensFilter();
-    }
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -114,8 +110,8 @@ public class SecurityConfig {
         http.apply(customDsl(authenticationSuccessHandler, authenticationFailureHandler, objectMapper));
 
         //security에 jwt 토큰 인증필터 적용
-        http.addFilterBefore(customAccessTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterAfter(customReissueTokensFilter(), CustomAccessTokenFilter.class);
+        http.addFilterBefore(customJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterAfter(customReissueTokensFilter(), CustomJwtTokenFilter.class);
 
         return http.build();
     }

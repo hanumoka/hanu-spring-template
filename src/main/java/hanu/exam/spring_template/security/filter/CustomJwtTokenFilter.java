@@ -29,7 +29,7 @@ import java.util.Collection;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CustomAccessTokenFilter extends OncePerRequestFilter {
+public class CustomJwtTokenFilter extends OncePerRequestFilter {
 
     private final String AUTHORIZATION_HEADER;
     private final String HEADER_NAME;
@@ -81,8 +81,7 @@ public class CustomAccessTokenFilter extends OncePerRequestFilter {
                  */
             }catch(TokenExpiredException tee){
                 logger.warn("accessToken 만료됨...");
-                //TODO:memo 엑세스 토큰이 만료된 경우 다음 customReissueTokenFilter를 탈수 있도록 예외를 던지지 않는다.
-//                throw tee;
+                throw tee;
             } catch(Exception e){
                 logger.warn("accessToken 벨리데이션 예외발생");
                 throw e;

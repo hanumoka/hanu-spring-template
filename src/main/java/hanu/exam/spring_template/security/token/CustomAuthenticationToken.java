@@ -12,7 +12,6 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
     private Long userId;
     private String username;
 
-
     public CustomAuthenticationToken(Long userId, String username, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.userId = userId;
