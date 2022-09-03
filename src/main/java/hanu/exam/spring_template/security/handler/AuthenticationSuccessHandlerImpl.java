@@ -36,6 +36,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
+        log.warn("AuthenticationSuccessHandlerImpl onAuthenticationSuccess");
         // 전달받은 인증정보 SecurityContextHolder 에 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -51,7 +52,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
                 , serviceName);
 
         // JWT Token 발급 - refreshToken
-        String refreshToken = jwtProvider.createAccessToken(
+        String refreshToken = jwtProvider.createRefreshToken(
                 customAuthenticationToken.getUserId()
                 , customAuthenticationToken.getUsername()
                 , serviceName);

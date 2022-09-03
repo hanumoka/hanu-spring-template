@@ -2,7 +2,8 @@ package hanu.exam.spring_template.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hanu.exam.spring_template.config.SecurityPermitAllConfig;
-import hanu.exam.spring_template.security.filter.CustomAuthorizationFilter;
+import hanu.exam.spring_template.security.filter.CustomAccessTokenFilter;
+import hanu.exam.spring_template.security.filter.CustomReissueTokensFilter;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,22 +70,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CustomAuthorizationFilter customAuthorizationFilter() {
-        return new CustomAuthorizationFilter(AUTHORIZATION_HEADER, HEADER_NAME, jwtProvider, objectMapper);
+    public CustomAccessTokenFilter customAccessTokenFilter() {
+        return new CustomAccessTokenFilter(AUTHORIZATION_HEADER, HEADER_NAME, jwtProvider, objectMapper);
+    }
+
+    @Bean
+    public CustomReissueTokensFilter customReissueTokensFilter(){
+        return new CustomReissueTokensFilter();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        // GET 화이트리스트
-//        final String[] GET_WHITELIST = new String[]{
-//                "/api/account/test",
-//        };
-
-        // POST 화이트리스트
-//        final String[] POST_WHITELIST = new String[]{
-//                "/api/account/test",
-//        };
 
         //jwt 토큰방식 적용을 위한 기초 설정
         http.cors().configurationSource(corsConfigurationSource())
@@ -101,7 +97,6 @@ public class SecurityConfig {
                         securityPermitAllConfig.getGetList().toArray(new String[0])).permitAll()
                 .antMatchers(HttpMethod.POST,
                         securityPermitAllConfig.getPostList().toArray(new String[0])).permitAll()
-
         ;
 
 
@@ -109,7 +104,6 @@ public class SecurityConfig {
         http.exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint) // 인증실패 처리(401처리)
                 .accessDeniedHandler(accessDeniedHandler) // 인가실패 처리(403처리)
-
         ;
 
         // 기본적으로 모든 URL에 대한 권한검증 처리
@@ -120,7 +114,8 @@ public class SecurityConfig {
         http.apply(customDsl(authenticationSuccessHandler, authenticationFailureHandler, objectMapper));
 
         //security에 jwt 토큰 인증필터 적용
-        http.addFilterBefore(customAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(customAccessTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(customReissueTokensFilter(), CustomAccessTokenFilter.class);
 
         return http.build();
     }

@@ -63,10 +63,10 @@ hanu:
     header-name: Bearer
     access-token:
       secret-key: sebure-access-key-20220712
-      expire-length: 50000
+      expire-length: 10000
     refresh-token:
       secret-key: sebure-refresh-key-20220712
-      expire-length: 150000
+      expire-length: 15000000
   security:
     permit-all:
       getList:

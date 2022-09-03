@@ -34,7 +34,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         //authentication 에는 사용자가 입력한 인증정보(username, password)가 들어있다.
 
         log.info("=========================================>");
-        log.info("AuthenticationProviderImpl authenticate...");
+        log.warn("AuthenticationProviderImpl authenticate...");
 
         //TODO: 아래 로잭 위치 수정 필요 else if 문 내부로 들어가야 할듯
         //인증을 위한 구현 로직이 들어간다.
@@ -75,7 +75,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
     @Override
     public boolean supports(Class<?> authentication) {
 
-        log.info("supports");
+        log.warn("AuthenticationProviderImpl supports");
 
         /**
          * /login의 로그인 요청인 경우 인가시도
