@@ -51,16 +51,16 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         log.warn("CustomJwtFilter doFilterInternal");
 
         // Request Header에서 토큰 추출
-        String jwt = jwtProvider.resolveAccessToken(request);
-        log.info("jwt:" + jwt);
+        String accessToken = jwtProvider.resolveAccessToken(request);
+        log.info("accessToken:" + accessToken);
 
         // AccessToken 유효성 검사
-        if (StringUtils.hasText(jwt)) {
+        if (StringUtils.hasText(accessToken)) {
             JwtTokenDto jwtTokenDto;
 
             try{
                 //토큰의 유효성 검사
-                jwtTokenDto = jwtProvider.validateAccessToken(jwt);
+                jwtTokenDto = jwtProvider.validateAccessToken(accessToken);
 
                 // 토큰으로 인증 정보를 추출
                 Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
@@ -74,14 +74,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
             }catch(TokenExpiredException tee){
                 logger.warn("accessToken 만료됨...");
+                String refreshToken = jwtProvider.resolveRefreshTokenInCookie(request);
+                logger.warn("refreshToken:" + refreshToken);
+
                 //만료돤 액세스토큰인 경우
                 ReissueRequestToken reissueRequestToken =
                         ReissueRequestToken.builder()
-                                .accessToken(jwt)
-                                .refreshToken("")
+                                .accessToken(accessToken)
+                                .refreshToken(refreshToken)
                                 .build();
 
-                throw tee;
+                SecurityContextHolder.getContext().setAuthentication(reissueRequestToken);
+
+//                throw tee;
             } catch(Exception e){
                 logger.warn("accessToken 벨리데이션 예외발생");
                 throw e;

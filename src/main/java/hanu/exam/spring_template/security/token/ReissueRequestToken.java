@@ -27,4 +27,12 @@ public class ReissueRequestToken extends AbstractAuthenticationToken {
     public Object getPrincipal() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "ReissueRequestToken{" +
+                "accessToken='" + accessToken + '\'' +
+                ", refreshToken='" + refreshToken + '\'' +
+                '}';
+    }
 }

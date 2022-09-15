@@ -57,8 +57,10 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
                 , jwtAuthenticationToken.getUsername()
                 , serviceName);
 
-        HttpUtil.setRefreshToken(response, refreshToken, REFRESH_VALIDITY_IN_MILLISECONDS / 1000);
+        //생성된 리프래시토큰은 쿠키에 저장한다.
+        jwtProvider.setRefreshTokenInCookie(response, refreshToken, REFRESH_VALIDITY_IN_MILLISECONDS / 1000);
 
+        //생성된 액세스토큰은 리스폰스로 응답한다.
         ApiResponse.accessToken(response, accessToken);
     }
 

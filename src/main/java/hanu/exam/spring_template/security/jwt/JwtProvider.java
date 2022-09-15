@@ -10,10 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Date;
 
@@ -98,6 +101,37 @@ public class JwtProvider {
         if (org.springframework.util.StringUtils.hasText(bearerToken) && bearerToken.startsWith(HEADER_NAME)) {
             return bearerToken.substring(7);
         } //if
+        return null;
+    }
+
+    /**
+     * 리프래시토큰을 쿠키에 셋팅
+     */
+    public HttpServletResponse setRefreshTokenInCookie(HttpServletResponse response
+            , String refreshToken
+            , long maxAgeInSecond) {
+        // TODO : https 적용시 secure 적용 필요
+        ResponseCookie cookie = ResponseCookie.from("refresh-token", refreshToken)
+                .httpOnly(true)
+                .sameSite("lax")
+                .maxAge(maxAgeInSecond)
+                .path("/")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+        return response;
+    }
+
+    /**
+     * 쿠키에서 리프래치토큰을 추출한다.
+     */
+    public String resolveRefreshTokenInCookie(HttpServletRequest request) {
+        final Cookie[] cookies = request.getCookies();
+        if (cookies == null) return null;
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("refresh-token")) {
+                return cookie.getValue();
+            }
+        }
         return null;
     }
 
