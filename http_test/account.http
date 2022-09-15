@@ -16,6 +16,12 @@ client.global.set("access_token", response.body.result.accessToken);
 // client.global.set("refresh_token", response.body.result.refreshToken);
 %}
 
+### 토큰재발행 요청
+POST http://{{host}}:{{port}}/api/v1/auth/reissue
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+
 ### 자기정보조회
 GET http://localhost:8080/api/v1/account
 Authorization: Bearer {{access_token}}

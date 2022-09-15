@@ -2,7 +2,7 @@ package hanu.exam.spring_template.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hanu.exam.spring_template.config.SecurityPermitAllConfig;
-import hanu.exam.spring_template.security.filter.CustomJwtTokenFilter;
+import hanu.exam.spring_template.security.filter.JwtTokenFilter;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,8 +69,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CustomJwtTokenFilter customJwtTokenFilter() {
-        return new CustomJwtTokenFilter(AUTHORIZATION_HEADER, HEADER_NAME, jwtProvider, objectMapper);
+    public JwtTokenFilter customJwtTokenFilter() {
+        return new JwtTokenFilter(jwtProvider);
     }
 
 

@@ -1,6 +1,6 @@
 package hanu.exam.spring_template.security;
 
-import hanu.exam.spring_template.security.token.CustomAuthenticationToken;
+import hanu.exam.spring_template.security.token.JwtAuthenticationToken;
 import hanu.exam.spring_template.security.service.AccountContext;
 import hanu.exam.spring_template.security.token.ReissueRequestToken;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * 인증 구현
+     * 인증 처리를 하는 핵심 메소드
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -36,13 +36,13 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         log.info("=========================================>");
         log.warn("AuthenticationProviderImpl authenticate...");
 
-        //TODO: 아래 로잭 위치 수정 필요 else if 문 내부로 들어가야 할듯
+        //TODO: 아래 로직 위치 수정 필요 else if 문 내부로 들어가야 할듯
         //인증을 위한 구현 로직이 들어간다.
         String username = authentication.getName();
 
         AccountContext accountContext = (AccountContext)userDetailsService.loadUserByUsername(username);
 
-        if(authentication instanceof CustomAuthenticationToken){
+        if(authentication instanceof JwtAuthenticationToken){
             log.info("jwt 토큰을 이용한 request의 인증 요청...");
             // 접근권함 검사등..
         }else if(authentication instanceof UsernamePasswordAuthenticationToken){
@@ -63,7 +63,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         // ex. 계정 lock, 비밀번호 만료, 접근하려는 리소스의 권한을 가지고 있는지 등접
 
         //검증이 성공한 검증정보를 authenticationManager에게 다시 리턴한다.
-        return new CustomAuthenticationToken(accountContext.getAccount().getId(),
+        return new JwtAuthenticationToken(accountContext.getAccount().getId(),
                 accountContext.getAccount().getUsername(),
                 accountContext.getAuthorities());
     }
@@ -78,20 +78,21 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         log.warn("AuthenticationProviderImpl supports");
 
         /**
-         * /login의 로그인 요청인 경우 인가시도
+         * /login의 로그인 인증시도
          */
         if(authentication.equals(UsernamePasswordAuthenticationToken.class)) return true;
 
         /**
-         * jwt 토큰을 가진 요청인 경우 인가시도
+         * jwt 토큰을 가진 요청의 인증시도
          */
-        if(CustomAuthenticationToken.class.isAssignableFrom(authentication)) return true;
+        if(JwtAuthenticationToken.class.isAssignableFrom(authentication)) return true;
 
         /**
-         * 토큰 재발행 요청
+         * jwt 토큰 재발인 요청의 인증시도
          */
         if(ReissueRequestToken.class.isAssignableFrom(authentication)) return true;
-        //TODO:흠. 익명사용자의 요청도 검사하려면 무조건 true로 리턴해야 할것 같다.
+
+        //기타 토큰은 거부한다.
         return false;
 
     }

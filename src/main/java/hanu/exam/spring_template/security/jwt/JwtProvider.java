@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 
@@ -32,6 +33,12 @@ public class JwtProvider {
 
     @Value("${hanu.jwt.refresh-token.expire-length}")
     private long REFRESH_VALIDITY_IN_MILLISECONDS;
+
+    @Value("${hanu.jwt.authorization-header}")
+    private String AUTHORIZATION_HEADER;
+    @Value("${hanu.jwt.header-name}")
+    private String HEADER_NAME;
+
 
     @PostConstruct
     protected void init() {
@@ -83,22 +90,33 @@ public class JwtProvider {
         );
     }
 
-    public JwtTokenDto validateRefreshToken(String refreshToken) {
-
-        if (StringUtils.isEmpty(refreshToken)) {
-            throw new JWTVerificationException("리프레시 토큰이 존재하지 않습니다.");
-        }
-
-        Algorithm algorithm = Algorithm.HMAC256(REFRESH_TOKEN_SECRET_KEY.getBytes());
-        JWTVerifier verifier = JWT.require(algorithm).build();
-        DecodedJWT decodedJWT;
-        JwtTokenDto jwtTokenDto;
-
-        decodedJWT = verifier.verify(refreshToken);
-        Claim claim = decodedJWT.getClaim("username");
-        //SignatureVerificationException
-        return jwtTokenDto = new JwtTokenDto(Long.valueOf(decodedJWT.getSubject()), decodedJWT.getClaim("username").asString());
+    /**
+     * Request Header에서 accessToken 토큰 추출
+     */
+    public String resolveAccessToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        if (org.springframework.util.StringUtils.hasText(bearerToken) && bearerToken.startsWith(HEADER_NAME)) {
+            return bearerToken.substring(7);
+        } //if
+        return null;
     }
+
+//    public JwtTokenDto validateRefreshToken(String refreshToken) {
+//
+//        if (StringUtils.isEmpty(refreshToken)) {
+//            throw new JWTVerificationException("리프레시 토큰이 존재하지 않습니다.");
+//        }
+//
+//        Algorithm algorithm = Algorithm.HMAC256(REFRESH_TOKEN_SECRET_KEY.getBytes());
+//        JWTVerifier verifier = JWT.require(algorithm).build();
+//        DecodedJWT decodedJWT;
+//        JwtTokenDto jwtTokenDto;
+//
+//        decodedJWT = verifier.verify(refreshToken);
+//        Claim claim = decodedJWT.getClaim("username");
+//        //SignatureVerificationException
+//        return jwtTokenDto = new JwtTokenDto(Long.valueOf(decodedJWT.getSubject()), decodedJWT.getClaim("username").asString());
+//    }
 
 //    public String getRefreshTokenIdTokenFromAccessToken(String token){
 //        DecodedJWT decodedJWT = JWT.decode(token);

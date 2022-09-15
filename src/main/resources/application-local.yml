@@ -74,5 +74,6 @@ hanu:
         - /account/test
       postList:
         - /api/v1/account/test
+        - /api/v1/auth/reissue
 
 

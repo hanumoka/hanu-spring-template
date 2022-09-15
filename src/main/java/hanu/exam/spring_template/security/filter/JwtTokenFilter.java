@@ -1,10 +1,10 @@
 package hanu.exam.spring_template.security.filter;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import hanu.exam.spring_template.security.token.CustomAuthenticationToken;
+import hanu.exam.spring_template.security.token.JwtAuthenticationToken;
 import hanu.exam.spring_template.security.jwt.JwtTokenDto;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
+import hanu.exam.spring_template.security.token.ReissueRequestToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -29,12 +29,9 @@ import java.util.Collection;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CustomJwtTokenFilter extends OncePerRequestFilter {
+public class JwtTokenFilter extends OncePerRequestFilter {
 
-    private final String AUTHORIZATION_HEADER;
-    private final String HEADER_NAME;
     private final JwtProvider jwtProvider;
-    private final ObjectMapper objectMapper;
 
     /**
      * 토큰 인증 정보를 현재 쓰레드의 SecurityContext 에 저장하는 역할 수행
@@ -46,14 +43,15 @@ public class CustomJwtTokenFilter extends OncePerRequestFilter {
      * -
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
         log.warn("CustomJwtFilter doFilterInternal");
 
         // Request Header에서 토큰 추출
-        String jwt = resolveAccessToken(request);
+        String jwt = jwtProvider.resolveAccessToken(request);
         log.info("jwt:" + jwt);
 
         // AccessToken 유효성 검사
@@ -66,7 +64,7 @@ public class CustomJwtTokenFilter extends OncePerRequestFilter {
 
                 // 토큰으로 인증 정보를 추출
                 Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                Authentication authentication = new CustomAuthenticationToken(
+                Authentication authentication = new JwtAuthenticationToken(
                         jwtTokenDto.getUserId(),
                         jwtTokenDto.getUsername(),
                         authorities);
@@ -74,13 +72,15 @@ public class CustomJwtTokenFilter extends OncePerRequestFilter {
                 // SecurityContext에 저장
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                /**
-                 * 이곳에서 예외나 다른 문제가 발생하여 SecurityContextHolder.getContext().setAuthentication 를 하지 못하면
-                 * AuthenticationEntryPointImpl commence 로 이동하게 된다.
-                 * Authorization 필터에서 문제가 발생하여 AuthenticationEntryPointImpl 가 발생한다??? 말이좀 안맞는데
-                 */
             }catch(TokenExpiredException tee){
                 logger.warn("accessToken 만료됨...");
+                //만료돤 액세스토큰인 경우
+                ReissueRequestToken reissueRequestToken =
+                        ReissueRequestToken.builder()
+                                .accessToken(jwt)
+                                .refreshToken("")
+                                .build();
+
                 throw tee;
             } catch(Exception e){
                 logger.warn("accessToken 벨리데이션 예외발생");
@@ -91,16 +91,6 @@ public class CustomJwtTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    /**
-     * Request Header에서 accessToken 토큰 추출
-     */
-    private String resolveAccessToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(HEADER_NAME)) {
-            return bearerToken.substring(7);
-        } //if
-        return null;
-    }
 
     /**
      * request 쿠카에서 refresh-toekn 추출

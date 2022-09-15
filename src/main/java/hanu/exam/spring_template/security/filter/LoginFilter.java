@@ -22,11 +22,11 @@ import java.io.IOException;
  * AuthenticationFailureHandlerImpl 가 동작한다.
  */
 @Slf4j
-public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final ObjectMapper objectMapper;
 
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper) {
+    public LoginFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper) {
         super.setAuthenticationManager(authenticationManager);
         this.objectMapper = objectMapper;
     }

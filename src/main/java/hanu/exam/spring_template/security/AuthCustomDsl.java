@@ -1,7 +1,7 @@
 package hanu.exam.spring_template.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hanu.exam.spring_template.security.filter.CustomAuthenticationFilter;
+import hanu.exam.spring_template.security.filter.LoginFilter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,17 +18,17 @@ public class AuthCustomDsl extends AbstractHttpConfigurer<AuthCustomDsl, HttpSec
     public void configure(HttpSecurity http) {
         AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
 
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager, objectMapper);
+        LoginFilter loginFilter = new LoginFilter(authenticationManager, objectMapper);
         // 필터 URL 설정
-        customAuthenticationFilter.setFilterProcessesUrl("/api/auth/login");
+        loginFilter.setFilterProcessesUrl("/api/auth/login");
         // 인증 성공 핸들러
-        customAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
+        loginFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
         // 인증 실패 핸들러
-        customAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
+        loginFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
         // BeanFactory에 의해 모든 property가 설정되고 난 뒤 실행
-        customAuthenticationFilter.afterPropertiesSet();
+        loginFilter.afterPropertiesSet();
 
-        http.addFilter(customAuthenticationFilter);
+        http.addFilter(loginFilter);
     }
 
 

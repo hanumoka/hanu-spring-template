@@ -8,22 +8,13 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
  */
 public class ReissueRequestToken extends AbstractAuthenticationToken {
 
-    private String username;
-    private Long userId;
-    private String refreshToken; // 필요없지만 혹시나...
-
-//    @Builder
-//    public ReissueRequestToken(String username, Long userId) {
-//        super(null);
-//        this.username = username;
-//        this.userId = userId;
-//    }
+    private String accessToken;  // 만료된 액세스토큰
+    private String refreshToken; //
 
     @Builder
-    public ReissueRequestToken(String username, Long userId, String refreshToken) {
+    public ReissueRequestToken(String accessToken, String refreshToken) {
         super(null);
-        this.username = username;
-        this.userId = userId;
+        this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
 

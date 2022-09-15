@@ -15,8 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * request로 부터 유효한 jwt 토큰아 없는 경우 해당 commence가 호출된다.
- * AuthenticationEntryPointImpl 이름을 가지고 있지만 실제로 검증이 필요한 요청에 유효한 토큰이 없는경우 해당 로직이 동작한다.
+ * CustomJwtTokenFilter에서 setAuthentication 을 하지못하면 해당 클래스의 commence가 호출된다.
  */
 @Slf4j
 @RequiredArgsConstructor
