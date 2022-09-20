@@ -1,7 +1,7 @@
 package hanu.exam.spring_template.security.filter;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import hanu.exam.spring_template.security.token.JwtAuthenticationToken;
+import hanu.exam.spring_template.security.token.JwtRequestToken;
 import hanu.exam.spring_template.security.jwt.JwtTokenDto;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
 import hanu.exam.spring_template.security.token.ReissueRequestToken;
@@ -64,13 +64,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 // 토큰으로 인증 정보를 추출
                 Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                Authentication authentication = new JwtAuthenticationToken(
+                JwtRequestToken jwtRequestToken = new JwtRequestToken(
                         jwtTokenDto.getUserId(),
                         jwtTokenDto.getUsername(),
                         authorities);
 
                 // SecurityContext에 저장
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(jwtRequestToken);
 
             }catch(TokenExpiredException tee){
                 logger.warn("accessToken 만료됨...");

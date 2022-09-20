@@ -1,6 +1,9 @@
 package hanu.exam.spring_template.security;
 
-import hanu.exam.spring_template.security.token.JwtAuthenticationToken;
+import hanu.exam.spring_template.domain.account.entity.Account;
+import hanu.exam.spring_template.security.service.CustomUserDetailsService;
+import hanu.exam.spring_template.security.token.CustomAuthResultToken;
+import hanu.exam.spring_template.security.token.JwtRequestToken;
 import hanu.exam.spring_template.security.service.AccountContext;
 import hanu.exam.spring_template.security.token.ReissueRequestToken;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +40,18 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         log.warn("AuthenticationProviderImpl authenticate...");
 
 
-        if (authentication instanceof JwtAuthenticationToken) {
+        if (authentication instanceof JwtRequestToken) {
             log.warn("jwt 토큰을 이용한 request의 인증 요청...");
             // 접근권함 검사등..
+            JwtRequestToken jwtRequestToken = ((JwtRequestToken) authentication);
+            Long userId = jwtRequestToken.getUserId();
+            CustomUserDetailsService customUserDetailsService = (CustomUserDetailsService) userDetailsService;
+            Account account = customUserDetailsService.loadUserByUserId(userId);
+            if(account != null){
+                return new CustomAuthResultToken(account.getId(),
+                        account.getUsername(),
+                        null);
+            }
         } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
             log.warn("/login 엔드포인트의 로그인 요청...");
             //TODO: 아래 로직 위치 수정 필요 else if 문 내부로 들어가야 할듯
@@ -52,7 +64,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
                 throw new BadCredentialsException("BadCredentialsException");
             }
 
-            return new JwtAuthenticationToken(accountContext.getAccount().getId(),
+            return new CustomAuthResultToken(accountContext.getAccount().getId(),
                     accountContext.getAccount().getUsername(),
                     accountContext.getAuthorities());
         } else if (authentication instanceof ReissueRequestToken) {
@@ -89,7 +101,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         /**
          * jwt 토큰을 가진 요청의 인증시도
          */
-        if (JwtAuthenticationToken.class.isAssignableFrom(authentication)) return true;
+        if (JwtRequestToken.class.isAssignableFrom(authentication)) return true;
 
         /**
          * jwt 토큰 재발인 요청의 인증시도

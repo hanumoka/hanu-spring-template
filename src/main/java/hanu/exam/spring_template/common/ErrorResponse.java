@@ -29,15 +29,19 @@ public class ErrorResponse {
 
     private String timestamp;
     private String path;
-    @JsonIgnore
-    private String controllerName;
-    @JsonIgnore
-    private String methodName;
     private int status;
     private String message;
     private String code;
     private List<FieldError> errors = new ArrayList<>();
 
+    @JsonIgnore
+    private String controllerName;
+
+    @JsonIgnore
+    private String methodName;
+
+    @JsonIgnore
+    private Throwable throwable;
 
     public static ErrorResponse of(ErrorCode errorCode
             , String controllerName, String methodName, String path
@@ -65,6 +69,29 @@ public class ErrorResponse {
                 .build();
     }
 
+    public static ErrorResponse of(ErrorCode errorCode, String path, Throwable throwable) {
+        return ErrorResponse.builder()
+                .timestamp(sdf.format(System.currentTimeMillis()))
+                .code(errorCode.getCode())
+                .status(errorCode.getStatus())
+                .message(errorCode.getMessage())
+                .path(path)
+                .errors(new ArrayList<>())
+                .throwable(throwable)
+                .build();
+    }
+
+    public static ErrorResponse of(ErrorCode errorCode, Throwable throwable) {
+        return ErrorResponse.builder()
+                .timestamp(sdf.format(System.currentTimeMillis()))
+                .code(errorCode.getCode())
+                .status(errorCode.getStatus())
+                .message(errorCode.getMessage())
+                .errors(new ArrayList<>())
+                .throwable(throwable)
+                .build();
+    }
+
     public static void error(ServletResponse response, HttpStatus httpStatus, ErrorCode errorCode, String path) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
@@ -74,11 +101,12 @@ public class ErrorResponse {
         httpServletResponse
                 .getWriter().
                 write(Objects.requireNonNull(
-                                objectMapper.writeValueAsString(ErrorResponse.of(errorCode, path)))
+                        objectMapper.writeValueAsString(ErrorResponse.of(errorCode, path)))
                 );
     }
 
-    public static void error(ServletResponse response, HttpStatus httpStatus, ErrorCode errorCode) throws IOException {
+    public static void error(ServletResponse response, HttpStatus httpStatus, ErrorCode errorCode)
+            throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -89,6 +117,24 @@ public class ErrorResponse {
                 write(Objects.requireNonNull(
                         objectMapper.writeValueAsString(ErrorResponse.of(errorCode, "")))
                 );
+    }
+
+    public static void error(ServletResponse response,
+                             HttpStatus httpStatus,
+                             ErrorCode errorCode,
+                             Throwable throwable
+    ) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.setStatus(httpStatus.value());
+        httpServletResponse
+                .getWriter().
+                write(Objects.requireNonNull(
+                        objectMapper.writeValueAsString(
+                                ErrorResponse.of(errorCode, throwable))
+                ));
     }
 
 

@@ -7,12 +7,12 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 @Getter
-public class JwtAuthenticationToken extends AbstractAuthenticationToken {
+public class JwtRequestToken extends AbstractAuthenticationToken {
 
     private Long userId;
     private String username;
 
-    public JwtAuthenticationToken(Long userId, String username, Collection<? extends GrantedAuthority> authorities) {
+    public JwtRequestToken(Long userId, String username, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.userId = userId;
         this.username = username;
@@ -24,7 +24,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
      * @param authorities the collection of <tt>GrantedAuthority</tt>s for the principal
      *                    represented by this authentication object.
      */
-    public JwtAuthenticationToken(Collection<? extends GrantedAuthority> authorities) {
+    public JwtRequestToken(Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
     }
 

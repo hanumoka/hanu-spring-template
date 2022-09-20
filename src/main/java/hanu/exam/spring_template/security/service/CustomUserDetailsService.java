@@ -38,4 +38,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         // AccountContext -> User -> UserDetails 구현체
         return new AccountContext(opAccount.get(), roles);  // --> AuthenticationProvider에서 해당 리턴값을 받아 추가검증을 진행한다.
     }
+
+    public Account loadUserByUserId(Long userId) {
+       return accountRepository.findById(userId).orElse(null);
+    }
 }

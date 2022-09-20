@@ -1,8 +1,8 @@
 package hanu.exam.spring_template.security.handler;
 
 import hanu.exam.spring_template.common.ApiResponse;
-import hanu.exam.spring_template.common.HttpUtil;
-import hanu.exam.spring_template.security.token.JwtAuthenticationToken;
+import hanu.exam.spring_template.security.token.CustomAuthResultToken;
+import hanu.exam.spring_template.security.token.JwtRequestToken;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,21 +40,21 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         // 전달받은 인증정보 SecurityContextHolder 에 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) authentication;
+        CustomAuthResultToken customAuthResultToken = (CustomAuthResultToken) authentication;
 
-        log.info("userId:" + jwtAuthenticationToken.getUserId());
-        log.info("userName:" + jwtAuthenticationToken.getUsername());
+        log.info("userId:" + customAuthResultToken.getUserId());
+        log.info("userName:" + customAuthResultToken.getUsername());
 
         // JWT Token 발급 - accessToken
         String accessToken = jwtProvider.createAccessToken(
-                jwtAuthenticationToken.getUserId()
-                , jwtAuthenticationToken.getUsername()
+                customAuthResultToken.getUserId()
+                , customAuthResultToken.getUsername()
                 , serviceName);
 
         // JWT Token 발급 - refreshToken
         String refreshToken = jwtProvider.createRefreshToken(
-                jwtAuthenticationToken.getUserId()
-                , jwtAuthenticationToken.getUsername()
+                customAuthResultToken.getUserId()
+                , customAuthResultToken.getUsername()
                 , serviceName);
 
         //생성된 리프래시토큰은 쿠키에 저장한다.
