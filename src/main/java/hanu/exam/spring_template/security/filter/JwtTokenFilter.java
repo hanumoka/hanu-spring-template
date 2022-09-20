@@ -78,7 +78,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 logger.warn("refreshToken:" + refreshToken);
 
                 //refreshToken 벨리데이션 체크
-                jwtTokenDto = jwtProvider.validateAccessToken(accessToken);
+//                jwtTokenDto = jwtProvider.validateAccessToken(accessToken);
 
                 //만료돤 액세스토큰인 경우
                 ReissueRequestToken reissueRequestToken =

@@ -73,9 +73,11 @@ public class JwtProvider {
                 .sign(algorithm);
     }
 
-    public JwtTokenDto validateAccessToken(String token) {
+    public JwtTokenDto validateAccessToken(String accessToken) {
 
-        if (StringUtils.isEmpty(token)) {
+        log.info("validateAccessToken : {}", accessToken);
+
+        if (StringUtils.isEmpty(accessToken)) {
             throw new JWTVerificationException("액세스 토큰이 존재하지 않습니다.");
         }
 
@@ -84,7 +86,7 @@ public class JwtProvider {
         DecodedJWT decodedJWT;
         JwtTokenDto jwtTokenDto;
 
-        decodedJWT = verifier.verify(token);
+        decodedJWT = verifier.verify(accessToken);
         Claim claim = decodedJWT.getClaim("username");
         //SignatureVerificationException
         return new JwtTokenDto(
