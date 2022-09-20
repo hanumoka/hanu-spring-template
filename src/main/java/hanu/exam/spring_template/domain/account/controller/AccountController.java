@@ -1,7 +1,7 @@
 package hanu.exam.spring_template.domain.account.controller;
 
 import hanu.exam.spring_template.annotation.RestControllerV1;
-import hanu.exam.spring_template.common.ApiResponse;
+import hanu.exam.spring_template.common.response.CommonResponse;
 import hanu.exam.spring_template.domain.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,15 +18,15 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping(name="사용자가 자신의 정보 조회", value =MAIN_PATH + "/test")
-    public ApiResponse test(){
+    public CommonResponse test(){
         log.info("test...");
-        return new ApiResponse();
+        return new CommonResponse();
     }
 
     @GetMapping(name="사용자가 자신의 정보 조회", value ="/account")
-    public ApiResponse getMyAccountInfo(){
+    public CommonResponse getMyAccountInfo(){
         log.info("getMyAccountInfo...");
-        return new ApiResponse();
+        return new CommonResponse();
     }
 
 //    @PostMapping(name = "회원가입", value = "/signup")

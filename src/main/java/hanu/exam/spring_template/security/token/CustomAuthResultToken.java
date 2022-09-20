@@ -21,6 +21,12 @@ public class CustomAuthResultToken extends AbstractAuthenticationToken {
         this.username = username;
     }
 
+    public CustomAuthResultToken(Long userId, String username) {
+        super(null);
+        this.userId = userId;
+        this.username = username;
+    }
+
     /**
      * Creates a token with the supplied array of authorities.
      *

@@ -111,7 +111,6 @@ public class SecurityConfig {
 
         //security에 jwt 토큰 인증필터 적용
         http.addFilterBefore(customJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-//        http.addFilterAfter(customReissueTokensFilter(), CustomJwtTokenFilter.class);
 
         return http.build();
     }

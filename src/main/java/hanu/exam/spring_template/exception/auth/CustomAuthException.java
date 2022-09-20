@@ -1,6 +1,6 @@
 package hanu.exam.spring_template.exception.auth;
 
-import hanu.exam.spring_template.common.ErrorCode;
+import hanu.exam.spring_template.common.response.ErrorCode;
 import lombok.Getter;
 import org.springframework.security.core.AuthenticationException;
 

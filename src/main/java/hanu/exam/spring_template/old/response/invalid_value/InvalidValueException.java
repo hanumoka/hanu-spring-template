@@ -1,6 +1,6 @@
 package hanu.exam.spring_template.old.response.invalid_value;
 
-import hanu.exam.spring_template.common.ErrorCode;
+import hanu.exam.spring_template.common.response.ErrorCode;
 import hanu.exam.spring_template.exception.BusinessException;
 
 public abstract class InvalidValueException extends BusinessException {

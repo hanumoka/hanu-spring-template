@@ -1,11 +1,11 @@
-package hanu.exam.spring_template.common;
+package hanu.exam.spring_template.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ApiResponseCode {
+public enum ResponseCode {
 
     SUCCESS(200, "Success"),
 

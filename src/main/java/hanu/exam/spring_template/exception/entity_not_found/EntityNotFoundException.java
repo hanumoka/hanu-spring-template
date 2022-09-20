@@ -1,6 +1,6 @@
 package hanu.exam.spring_template.exception.entity_not_found;
 
-import hanu.exam.spring_template.common.ErrorCode;
+import hanu.exam.spring_template.common.response.ErrorCode;
 import hanu.exam.spring_template.exception.BusinessException;
 
 public abstract class EntityNotFoundException extends BusinessException {

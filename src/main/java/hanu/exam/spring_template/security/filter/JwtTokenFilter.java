@@ -77,6 +77,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 String refreshToken = jwtProvider.resolveRefreshTokenInCookie(request);
                 logger.warn("refreshToken:" + refreshToken);
 
+                //refreshToken 벨리데이션 체크
+                jwtTokenDto = jwtProvider.validateAccessToken(accessToken);
+
                 //만료돤 액세스토큰인 경우
                 ReissueRequestToken reissueRequestToken =
                         ReissueRequestToken.builder()
@@ -86,7 +89,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(reissueRequestToken);
 
-//                throw tee;
             } catch(Exception e){
                 logger.warn("accessToken 벨리데이션 예외발생");
                 throw e;
@@ -95,14 +97,5 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
-
-    /**
-     * request 쿠카에서 refresh-toekn 추출
-     */
-//    private String resolveRefreshToken(HttpServletRequest request){
-//        log.info("resolveRefreshToken start--->");
-//        return HttpUtil.getRefreshToken(request);
-//    }
 
 }

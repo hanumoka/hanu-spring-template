@@ -1,4 +1,4 @@
-package hanu.exam.spring_template.common;
+package hanu.exam.spring_template.common.response;
 
 import lombok.Getter;
 

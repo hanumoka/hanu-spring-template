@@ -1,4 +1,4 @@
-package hanu.exam.spring_template.common;
+package hanu.exam.spring_template.common.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -129,12 +129,8 @@ public class ErrorResponse {
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setStatus(httpStatus.value());
-        httpServletResponse
-                .getWriter().
-                write(Objects.requireNonNull(
-                        objectMapper.writeValueAsString(
-                                ErrorResponse.of(errorCode, throwable))
-                ));
+        httpServletResponse.getWriter().write(
+                Objects.requireNonNull(objectMapper.writeValueAsString(ErrorResponse.of(errorCode, throwable))));
     }
 
 

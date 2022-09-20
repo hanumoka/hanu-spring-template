@@ -1,7 +1,7 @@
 package hanu.exam.spring_template.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hanu.exam.spring_template.common.ErrorCode;
+import hanu.exam.spring_template.common.response.ErrorCode;
 import hanu.exam.spring_template.exception.auth.InvalidLoginInfoException;
 import hanu.exam.spring_template.security.dto.LoginReqDto;
 import lombok.extern.slf4j.Slf4j;

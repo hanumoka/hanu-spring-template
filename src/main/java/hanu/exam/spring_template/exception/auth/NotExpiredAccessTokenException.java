@@ -1,6 +1,6 @@
 package hanu.exam.spring_template.exception.auth;
 
-import hanu.exam.spring_template.common.ErrorCode;
+import hanu.exam.spring_template.common.response.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

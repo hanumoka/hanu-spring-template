@@ -1,8 +1,7 @@
 package hanu.exam.spring_template.security.handler;
 
-import hanu.exam.spring_template.common.ApiResponse;
+import hanu.exam.spring_template.common.response.CommonResponse;
 import hanu.exam.spring_template.security.token.CustomAuthResultToken;
-import hanu.exam.spring_template.security.token.JwtRequestToken;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +60,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         jwtProvider.setRefreshTokenInCookie(response, refreshToken, REFRESH_VALIDITY_IN_MILLISECONDS / 1000);
 
         //생성된 액세스토큰은 리스폰스로 응답한다.
-        ApiResponse.accessToken(response, accessToken);
+        CommonResponse.accessToken(response, accessToken);
     }
 
 }

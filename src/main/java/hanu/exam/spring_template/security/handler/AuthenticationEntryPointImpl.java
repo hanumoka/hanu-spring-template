@@ -1,8 +1,8 @@
 package hanu.exam.spring_template.security.handler;
 
 
-import hanu.exam.spring_template.common.ErrorCode;
-import hanu.exam.spring_template.common.ErrorResponse;
+import hanu.exam.spring_template.common.response.ErrorCode;
+import hanu.exam.spring_template.common.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

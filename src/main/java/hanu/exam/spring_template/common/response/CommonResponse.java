@@ -1,9 +1,8 @@
-package hanu.exam.spring_template.common;
+package hanu.exam.spring_template.common.response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 
 import javax.servlet.ServletResponse;
@@ -18,11 +17,10 @@ import java.util.Objects;
  */
 @Getter
 @AllArgsConstructor
-@RequiredArgsConstructor
-public class ApiResponse {
+public class CommonResponse {
 
-    private int code = ApiResponseCode.SUCCESS.getCode();
-    private String msg = ApiResponseCode.SUCCESS.getMessage();
+//    private int code = ApiResponseCode.SUCCESS.getCode();
+//    private String msg = ApiResponseCode.SUCCESS.getMessage();
 
     //security에서 토큰 발행 응답용
     public static void accessToken(ServletResponse response, String accessToken) throws IOException {
@@ -30,22 +28,20 @@ public class ApiResponse {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setCharacterEncoding("UTF-8");
-        httpServletResponse.setStatus(ApiResponseCode.SUCCESS.getCode());
+        httpServletResponse.setStatus(ResponseCode.SUCCESS.getCode());
         Map<String, String> tokenMap = new HashMap<>();
         tokenMap.put("accessToken", accessToken);
 
         httpServletResponse.getWriter()
-                .write(Objects.requireNonNull(
-                        objectMapper.writeValueAsString(new DataApiResponse<Map<String, String>>(tokenMap)
-                        )));
+                .write(Objects.requireNonNull(objectMapper.writeValueAsString(tokenMap)));
     }
 
-    @Getter
-    @AllArgsConstructor
-    public static class ReplaceString {
-        private final String key;
-        private final String value;
-    }
+//    @Getter
+//    @AllArgsConstructor
+//    public static class ReplaceString {
+//        private final String key;
+//        private final String value;
+//    }
 
 
     //    public static ApiResponse error(ApiResponseCode apiResponseCode) {

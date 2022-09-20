@@ -39,7 +39,6 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         log.info("=========================================>");
         log.warn("AuthenticationProviderImpl authenticate...");
 
-
         if (authentication instanceof JwtRequestToken) {
             log.warn("jwt 토큰을 이용한 request의 인증 요청...");
             // 접근권함 검사등..
@@ -48,10 +47,8 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
             CustomUserDetailsService customUserDetailsService = (CustomUserDetailsService) userDetailsService;
             Account account = customUserDetailsService.loadUserByUserId(userId);
             if(account != null){
-                return new CustomAuthResultToken(account.getId(),
-                        account.getUsername(),
-                        null);
-            }
+                return new CustomAuthResultToken(account.getId(), account.getUsername());
+            }//if
         } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
             log.warn("/login 엔드포인트의 로그인 요청...");
             //TODO: 아래 로직 위치 수정 필요 else if 문 내부로 들어가야 할듯
@@ -62,11 +59,9 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
             if (!passwordEncoder.matches(password, accountContext.getAccount().getPassword())) {
                 //패스워드 검증
                 throw new BadCredentialsException("BadCredentialsException");
-            }
+            }//if
 
-            return new CustomAuthResultToken(accountContext.getAccount().getId(),
-                    accountContext.getAccount().getUsername(),
-                    accountContext.getAuthorities());
+            return new CustomAuthResultToken(accountContext.getAccount().getId(), accountContext.getAccount().getUsername());
         } else if (authentication instanceof ReissueRequestToken) {
             log.warn("토큰 재발행 요청 확인...");
             ReissueRequestToken reissueRequestToken = (ReissueRequestToken) authentication;
