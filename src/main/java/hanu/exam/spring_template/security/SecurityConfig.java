@@ -107,7 +107,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated();
 
         //security에 /login 인증 필터 연동
-        http.apply(customDsl(authenticationSuccessHandler, authenticationFailureHandler, objectMapper));
+        http.apply(customDsl(authenticationSuccessHandler, authenticationFailureHandler, objectMapper, jwtProvider));
 
         //security에 jwt 토큰 인증필터 적용
         http.addFilterBefore(customJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

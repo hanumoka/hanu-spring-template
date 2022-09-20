@@ -1,7 +1,6 @@
 package hanu.exam.spring_template.security.filter;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import hanu.exam.spring_template.common.response.ApiResponse;
 import hanu.exam.spring_template.security.token.JwtRequestToken;
 import hanu.exam.spring_template.security.jwt.JwtTokenDto;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
@@ -71,22 +70,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 // SecurityContext에 저장
                 SecurityContextHolder.getContext().setAuthentication(jwtRequestToken);
 
-            }catch(TokenExpiredException tee){
-                logger.warn("accessToken 만료됨...");
-                throw tee;
-//                String refreshToken = jwtProvider.resolveRefreshTokenInCookie(request);
-//                logger.warn("refreshToken:" + refreshToken);
-//
-//                //refreshToken 벨리데이션 체크
-//                jwtTokenDto = jwtProvider.validateRefreshToken(refreshToken);
-//
-//                System.out.println("====================jwtTokenDto=======================");
-//                System.out.println(jwtTokenDto);
-//
-//                accessToken = jwtProvider.setRefreshTokenInCookie(jwtTokenDto.getUserId(), jwtTokenDto.getUsername(), response);
-//                ApiResponse.accessToken(response, accessToken);
-
-            } catch(Exception e){
+            }
+//            catch(TokenExpiredException tee){
+//                logger.warn("accessToken 만료됨...");
+//                throw tee;
+//            }
+            catch(Exception e){
                 logger.warn("accessToken 벨리데이션 예외발생");
                 throw e;
             } // catch

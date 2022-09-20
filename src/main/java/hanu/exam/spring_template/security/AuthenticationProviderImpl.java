@@ -62,7 +62,16 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
             }//if
 
             return new CustomAuthResultToken(accountContext.getAccount().getId(), accountContext.getAccount().getUsername());
-        } else {
+        } else if(authentication instanceof ReissueRequestToken){
+            log.warn("/reissue 엔드포인트의 토큰 재발행 요청 요청...");
+            ReissueRequestToken reissueRequestToken = ((ReissueRequestToken) authentication);
+            Long userId = reissueRequestToken.getUserId();
+            CustomUserDetailsService customUserDetailsService = (CustomUserDetailsService) userDetailsService;
+            Account account = customUserDetailsService.loadUserByUserId(userId);
+            if(account != null){
+                return new CustomAuthResultToken(account.getId(), account.getUsername());
+            }//if
+        }else {
             log.warn("토큰이 없는 요청 => 익명사용자의 요청");
         }
 
@@ -93,6 +102,10 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
          */
         if (JwtRequestToken.class.isAssignableFrom(authentication)) return true;
 
+        /**
+         * ReissueRequestToken 를 통한 토큰 재발행 시도
+         */
+        if (ReissueRequestToken.class.isAssignableFrom(authentication)) return true;
 
         //기타 토큰은 거부한다.
         return false;

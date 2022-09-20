@@ -26,6 +26,19 @@ Authorization: Bearer {{access_token}}
     });
 %}
 
+
+### 토큰재발행 요청
+POST http://{{host}}:{{port}}/api/auth/reissue
+Content-Type: application/json
+
+> {% //response handler
+client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+client.log(response.body.result.accessToken);
+client.global.set("access_token", response.body.result.accessToken);
+%}
+
 ### 회원가입
 POST http://localhost:8080/signup
 Content-Type: application/json
