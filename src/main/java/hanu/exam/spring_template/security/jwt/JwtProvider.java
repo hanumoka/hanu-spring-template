@@ -25,6 +25,8 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtProvider {
 
+    @Value("${hanu.service.name}")
+    private String serviceName;
     @Value("${hanu.jwt.access-token.secret-key}")
     private String ACCESS_TOKEN_SECRET_KEY;
 
@@ -95,6 +97,28 @@ public class JwtProvider {
         );
     }
 
+    public JwtTokenDto validateRefreshToken(String refreshToken) {
+
+        log.info("validateRefreshToken : {}", refreshToken);
+
+        if (StringUtils.isEmpty(refreshToken)) {
+            throw new JWTVerificationException("엑세스토큰 존재하지 않습니다.");
+        }
+
+        Algorithm algorithm = Algorithm.HMAC256(REFRESH_TOKEN_SECRET_KEY.getBytes());
+        JWTVerifier verifier = JWT.require(algorithm).build();
+        DecodedJWT decodedJWT;
+        JwtTokenDto jwtTokenDto;
+
+        decodedJWT = verifier.verify(refreshToken);
+        Claim claim = decodedJWT.getClaim("username");
+        //SignatureVerificationException
+        return new JwtTokenDto(
+                Long.valueOf(decodedJWT.getSubject())
+                , decodedJWT.getClaim("username").asString()
+        );
+    }
+
     /**
      * Request Header에서 accessToken 토큰 추출
      */
@@ -108,19 +132,32 @@ public class JwtProvider {
 
     /**
      * 리프래시토큰을 쿠키에 셋팅
+     * 1.accessToken 문자열을 리턴
+     * 2.Response 쿠키에 리프래시토큰을 셋팅
      */
-    public HttpServletResponse setRefreshTokenInCookie(HttpServletResponse response
-            , String refreshToken
-            , long maxAgeInSecond) {
+    public String setRefreshTokenInCookie(Long userId, String userName, HttpServletResponse response) {
         // TODO : https 적용시 secure 적용 필요
+
+        // JWT Token 발급 - accessToken
+        String accessToken = createAccessToken(
+                userId
+                , userName
+                , serviceName);
+
+        // JWT Token 발급 - refreshToken
+        String refreshToken = createRefreshToken(
+                userId
+                , userName
+                , serviceName);
+
         ResponseCookie cookie = ResponseCookie.from("refresh-token", refreshToken)
                 .httpOnly(true)
                 .sameSite("lax")
-                .maxAge(maxAgeInSecond)
+                .maxAge(REFRESH_VALIDITY_IN_MILLISECONDS / 1000)
                 .path("/")
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());
-        return response;
+        return accessToken;
     }
 
     /**
@@ -136,70 +173,5 @@ public class JwtProvider {
         }
         return null;
     }
-
-//    public JwtTokenDto validateRefreshToken(String refreshToken) {
-//
-//        if (StringUtils.isEmpty(refreshToken)) {
-//            throw new JWTVerificationException("리프레시 토큰이 존재하지 않습니다.");
-//        }
-//
-//        Algorithm algorithm = Algorithm.HMAC256(REFRESH_TOKEN_SECRET_KEY.getBytes());
-//        JWTVerifier verifier = JWT.require(algorithm).build();
-//        DecodedJWT decodedJWT;
-//        JwtTokenDto jwtTokenDto;
-//
-//        decodedJWT = verifier.verify(refreshToken);
-//        Claim claim = decodedJWT.getClaim("username");
-//        //SignatureVerificationException
-//        return jwtTokenDto = new JwtTokenDto(Long.valueOf(decodedJWT.getSubject()), decodedJWT.getClaim("username").asString());
-//    }
-
-//    public String getRefreshTokenIdTokenFromAccessToken(String token){
-//        DecodedJWT decodedJWT = JWT.decode(token);
-//        return decodedJWT.getClaim("refresh_token_id").toString();
-//    }
-
-    /**
-     * 액세스 토큰만 쿠키로 저장하고, 리프레쉬 토큰은 DB에 저장한다.
-     */
-//    public HttpServletResponse createCookie(HttpServletResponse response, String token) {
-//        // TODO : https 적용시 secure 적용 필요
-//        ResponseCookie cookie = ResponseCookie.from(HEADER_NAME, token)
-//                .httpOnly(true)
-//                .sameSite("lax")
-//                .maxAge(ACCESS_VALIDITY_IN_MILLISECONDS)
-//                .path("/")
-//                .build();
-//        response.addHeader("Set-Cookie", cookie.toString());
-//        return response;
-//    }
-//
-//    public HttpServletResponse deleteCookie(HttpServletResponse response) {
-//        // TODO : https 적용시 secure 적용 필요
-//        ResponseCookie cookie = ResponseCookie.from(HEADER_NAME, null)
-//                .httpOnly(true)
-//                .sameSite("lax")
-//                .maxAge(0)
-//                .path("/")
-//                .build();
-//        response.addHeader("Set-Cookie", cookie.toString());
-//        return response;
-//    }
-
-//    public String resolveCookie(HttpServletRequest request) {
-//        final Cookie[] cookies = request.getCookies();
-//        if (cookies == null) return null;
-//        for (Cookie cookie : cookies) {
-//            if (cookie.getName().equals(HEADER_NAME)) {
-//                return cookie.getValue();
-//            }
-//        }
-//        return null;
-//    }
-
-//    @Transactional
-//    public RefreshToken saveRefreshToken(String refreshToken) {
-//        return refreshTokenRepo.save(RefreshToken.builder().token(refreshToken).build());
-//    }
 
 }

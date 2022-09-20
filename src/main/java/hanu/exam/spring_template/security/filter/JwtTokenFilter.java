@@ -1,13 +1,12 @@
 package hanu.exam.spring_template.security.filter;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import hanu.exam.spring_template.common.response.ApiResponse;
 import hanu.exam.spring_template.security.token.JwtRequestToken;
 import hanu.exam.spring_template.security.jwt.JwtTokenDto;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
-import hanu.exam.spring_template.security.token.ReissueRequestToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -74,20 +73,18 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
             }catch(TokenExpiredException tee){
                 logger.warn("accessToken 만료됨...");
-                String refreshToken = jwtProvider.resolveRefreshTokenInCookie(request);
-                logger.warn("refreshToken:" + refreshToken);
-
-                //refreshToken 벨리데이션 체크
-//                jwtTokenDto = jwtProvider.validateAccessToken(accessToken);
-
-                //만료돤 액세스토큰인 경우
-                ReissueRequestToken reissueRequestToken =
-                        ReissueRequestToken.builder()
-                                .accessToken(accessToken)
-                                .refreshToken(refreshToken)
-                                .build();
-
-                SecurityContextHolder.getContext().setAuthentication(reissueRequestToken);
+                throw tee;
+//                String refreshToken = jwtProvider.resolveRefreshTokenInCookie(request);
+//                logger.warn("refreshToken:" + refreshToken);
+//
+//                //refreshToken 벨리데이션 체크
+//                jwtTokenDto = jwtProvider.validateRefreshToken(refreshToken);
+//
+//                System.out.println("====================jwtTokenDto=======================");
+//                System.out.println(jwtTokenDto);
+//
+//                accessToken = jwtProvider.setRefreshTokenInCookie(jwtTokenDto.getUserId(), jwtTokenDto.getUsername(), response);
+//                ApiResponse.accessToken(response, accessToken);
 
             } catch(Exception e){
                 logger.warn("accessToken 벨리데이션 예외발생");

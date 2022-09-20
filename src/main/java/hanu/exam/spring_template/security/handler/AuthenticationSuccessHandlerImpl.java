@@ -23,13 +23,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
 
-    @Value("${hanu.service.name}")
-    private String serviceName;
-
     private final JwtProvider jwtProvider;
-
-    @Value("${hanu.jwt.refresh-token.expire-length}")
-    private long REFRESH_VALIDITY_IN_MILLISECONDS;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -44,20 +38,10 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         log.info("userId:" + customAuthResultToken.getUserId());
         log.info("userName:" + customAuthResultToken.getUsername());
 
-        // JWT Token 발급 - accessToken
-        String accessToken = jwtProvider.createAccessToken(
-                customAuthResultToken.getUserId()
-                , customAuthResultToken.getUsername()
-                , serviceName);
-
-        // JWT Token 발급 - refreshToken
-        String refreshToken = jwtProvider.createRefreshToken(
-                customAuthResultToken.getUserId()
-                , customAuthResultToken.getUsername()
-                , serviceName);
-
         //생성된 리프래시토큰은 쿠키에 저장한다.
-        jwtProvider.setRefreshTokenInCookie(response, refreshToken, REFRESH_VALIDITY_IN_MILLISECONDS / 1000);
+        String accessToken = jwtProvider.setRefreshTokenInCookie(customAuthResultToken.getUserId(),
+                customAuthResultToken.getUsername(),
+                response);
 
         //생성된 액세스토큰은 리스폰스로 응답한다.
         ApiResponse.accessToken(response, accessToken);

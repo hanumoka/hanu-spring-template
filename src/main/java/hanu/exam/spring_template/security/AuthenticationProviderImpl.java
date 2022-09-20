@@ -62,11 +62,6 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
             }//if
 
             return new CustomAuthResultToken(accountContext.getAccount().getId(), accountContext.getAccount().getUsername());
-        } else if (authentication instanceof ReissueRequestToken) {
-            log.warn("토큰 재발행 요청 확인...");
-            ReissueRequestToken reissueRequestToken = (ReissueRequestToken) authentication;
-            log.warn(reissueRequestToken.toString());
-            //TODO: 리프레시토큰 유효성 검사
         } else {
             log.warn("토큰이 없는 요청 => 익명사용자의 요청");
         }
@@ -98,10 +93,6 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
          */
         if (JwtRequestToken.class.isAssignableFrom(authentication)) return true;
 
-        /**
-         * jwt 토큰 재발인 요청의 인증시도
-         */
-        if (ReissueRequestToken.class.isAssignableFrom(authentication)) return true;
 
         //기타 토큰은 거부한다.
         return false;
