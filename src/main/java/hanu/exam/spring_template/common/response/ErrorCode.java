@@ -8,6 +8,7 @@ public enum ErrorCode {
 
     // 500
     INTERNAL_SERVER_ERROR(500, "500", "INTERNAL_SERVER_ERROR"),
+    UNKNOWN_SERVER_ERROR(501, "501", "UNKNOWN_SERVER_ERROR"),
 
     //jwt
     JWT_NOT_EXPIRED_ACCESS_TOKEN(400, "J001", "Not Expired AccessToken."),
@@ -26,9 +27,9 @@ public enum ErrorCode {
     REFRESH_TOKEN_INVALID(400, "M004", "Refresh token is invalid"),
 
             ;
-    private final String code;
-    private final String message;
-    private int status;
+    private final String code;  // 이게 유니크 키
+    private final String message;  // 메세지
+    private final int status;  // TODO: 이거 필요 없을수도?
 
     ErrorCode(final int status, final String code, final String message) {
         this.status = status;

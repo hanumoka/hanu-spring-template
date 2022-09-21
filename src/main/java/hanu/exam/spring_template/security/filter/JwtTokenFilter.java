@@ -1,6 +1,7 @@
 package hanu.exam.spring_template.security.filter;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import hanu.exam.spring_template.common.response.ErrorCode;
 import hanu.exam.spring_template.security.token.JwtRequestToken;
 import hanu.exam.spring_template.security.jwt.JwtTokenDto;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
@@ -39,6 +40,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
      * - DB같은 곳에 조회 같은것을 하지 말자. 이녀석은 문지기
      * 주된 처리
      * -
+     *
+     * 주의: 이곳에서 예외를 던져도 AuthenticationEntiryPoint에서 잡지를 못한다.
+     * 데이터를 request에 담아서 전달하자.
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -46,7 +50,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        log.warn("CustomJwtFilter doFilterInternal");
+        log.warn("JwtTokenFilter doFilterInternal");
 
         // Request Header에서 토큰 추출
         String accessToken = jwtProvider.resolveAccessToken(request);
@@ -71,13 +75,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(jwtRequestToken);
 
             }
-//            catch(TokenExpiredException tee){
-//                logger.warn("accessToken 만료됨...");
-//                throw tee;
-//            }
+            catch(TokenExpiredException tee){
+                request.setAttribute("exception", ErrorCode.JWT_EXPIRED_ACCESS_TOKEN.getCode());
+            }
             catch(Exception e){
-                logger.warn("accessToken 벨리데이션 예외발생");
-                throw e;
+                log.error("================================================");
+                log.error("JwtTokenFilter - doFilterInternal() 오류발생");
+                log.error("token : {}", accessToken);
+                log.error("Exception Message : {}", e.getMessage());
+                log.error("Exception StackTrace : {");
+                e.printStackTrace();
+                log.error("}");
+                log.error("================================================");
+                request.setAttribute("exception", ErrorCode.UNKNOWN_SERVER_ERROR.getCode());
             } // catch
         } //if
 

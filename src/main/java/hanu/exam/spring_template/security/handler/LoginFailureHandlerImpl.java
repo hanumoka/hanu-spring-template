@@ -13,17 +13,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 로그인 실패 응답처리
- * - 잘못된 username, password가 입력된 경우
+ * 로그인 필터에서
+ * attemptAuthentication 진입직후 이증 실패시 동작
  */
 @Slf4j
-@Component
-public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHandler {
+@Component("loginFailureHandler")
+public class LoginFailureHandlerImpl implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         //TODO: 아이디, 패스워드를 다시 확인하라는 메시지 추가
-        log.warn("AuthenticationFailureHandlerImpl onAuthenticationFailure");
+        log.warn("LoginFailureHandlerImpl onAuthenticationFailure");
 //        ApiResponse.error(response, HttpStatus.UNAUTHORIZED, ApiResponseCode.UNAUTHORIZED_RESPONSE);
         ErrorResponse.error(response, HttpStatus.UNAUTHORIZED, ErrorCode.LOGIN_INPUT_INVALID);
     }

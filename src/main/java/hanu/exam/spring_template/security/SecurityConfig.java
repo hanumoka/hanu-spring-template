@@ -6,7 +6,6 @@ import hanu.exam.spring_template.security.filter.JwtTokenFilter;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -35,22 +34,17 @@ import static hanu.exam.spring_template.security.AuthCustomDsl.customDsl;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Value("${hanu.jwt.authorization-header}")
-    private String AUTHORIZATION_HEADER;
-    @Value("${hanu.jwt.header-name}")
-    private String HEADER_NAME;
-
     private final SecurityPermitAllConfig securityPermitAllConfig;
-
 
     // JWT 제공 클래스
     private final JwtProvider jwtProvider;
+
     // 인증 실패 또는 인증헤더가 전달받지 못했을때 핸들러
     private final AuthenticationEntryPoint authenticationEntryPoint;
     // 인증 성공 핸들러
-    private final AuthenticationSuccessHandler authenticationSuccessHandler;
+    private final AuthenticationSuccessHandler loginSuccessHandler;
     // 인증 실패 핸들러
-    private final AuthenticationFailureHandler authenticationFailureHandler;
+    private final AuthenticationFailureHandler loginFailureHandler;
     // 인가 실패 핸들러
     private final AccessDeniedHandler accessDeniedHandler;
     private final ObjectMapper objectMapper;
@@ -107,7 +101,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated();
 
         //security에 /login 인증 필터 연동
-        http.apply(customDsl(authenticationSuccessHandler, authenticationFailureHandler, objectMapper, jwtProvider));
+        http.apply(customDsl(loginSuccessHandler, loginFailureHandler, objectMapper, jwtProvider));
 
         //security에 jwt 토큰 인증필터 적용
         http.addFilterBefore(customJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

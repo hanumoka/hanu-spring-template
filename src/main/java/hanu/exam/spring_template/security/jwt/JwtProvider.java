@@ -102,7 +102,7 @@ public class JwtProvider {
         log.info("validateRefreshToken : {}", refreshToken);
 
         if (StringUtils.isEmpty(refreshToken)) {
-            throw new JWTVerificationException("엑세스토큰 존재하지 않습니다.");
+            throw new JWTVerificationException("리프래시토큰이 존재하지 않습니다.");
         }
 
         Algorithm algorithm = Algorithm.HMAC256(REFRESH_TOKEN_SECRET_KEY.getBytes());
