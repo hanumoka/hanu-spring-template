@@ -153,7 +153,8 @@ public class JwtProvider {
         ResponseCookie cookie = ResponseCookie.from("refresh-token", refreshToken)
                 .httpOnly(true)
                 .sameSite("lax")
-                .maxAge(REFRESH_VALIDITY_IN_MILLISECONDS / 1000)
+//                .maxAge(REFRESH_VALIDITY_IN_MILLISECONDS / 1000) // TODO: maxAge를 안줘도 괜찮을듯...
+//                .maxAge(REFRESH_VALIDITY_IN_MILLISECONDS + 100000000 ) // 테스트용도.
                 .path("/")
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());

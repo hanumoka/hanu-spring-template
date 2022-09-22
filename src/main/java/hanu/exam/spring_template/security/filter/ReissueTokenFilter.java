@@ -1,5 +1,7 @@
 package hanu.exam.spring_template.security.filter;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import hanu.exam.spring_template.common.response.ErrorCode;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
 import hanu.exam.spring_template.security.jwt.JwtTokenDto;
 import hanu.exam.spring_template.security.token.ReissueRequestToken;
@@ -8,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,26 +33,30 @@ public class ReissueTokenFilter extends UsernamePasswordAuthenticationFilter {
             , HttpServletResponse response) throws AuthenticationException {
         log.info("ReissueTokenFilter attemptAuthentication...");
 
+        //쿠키에서 리프레시토큰 추출
         String refreshToken = jwtProvider.resolveRefreshTokenInCookie(request);
-//        //refreshToken 벨리데이션 체크
-        JwtTokenDto jwtTokenDto = jwtProvider.validateRefreshToken(refreshToken);
+        log.info("refreshToken : {}", refreshToken);
 
-        log.info(jwtTokenDto.toString());
+        ReissueRequestToken reissueRequestToken;
+        //refreshToken 벨리데이션 체크
+        try{
+            JwtTokenDto jwtTokenDto = jwtProvider.validateRefreshToken(refreshToken);
+            log.info(jwtTokenDto.toString());
 
-        //TODO: ReissueToken
-        ReissueRequestToken reissueRequestToken = ReissueRequestToken.builder()
-                .refreshToken(refreshToken)
-                .userId(jwtTokenDto.getUserId())
-                .userName(jwtTokenDto.getUsername())
-                .build();
-//
-//        System.out.println("====================jwtTokenDto=======================");
-//        System.out.println(jwtTokenDto);
-//
-//        accessToken = jwtProvider.setRefreshTokenInCookie(jwtTokenDto.getUserId(), jwtTokenDto.getUsername(), response);
-//        ApiResponse.accessToken(response, accessToken);
+            //TODO: ReissueToken
+            reissueRequestToken = ReissueRequestToken.builder()
+                    .refreshToken(refreshToken)
+                    .userId(jwtTokenDto.getUserId())
+                    .userName(jwtTokenDto.getUsername())
+                    .build();
 
-//        return super.attemptAuthentication(request, response);
+        }catch(TokenExpiredException tee){
+            request.setAttribute("exception", ErrorCode.JWT_EXPIRED_REFRESH_TOKEN);
+            throw tee;
+        }catch(Exception e){
+            request.setAttribute("exception", ErrorCode.UNKNOWN_SERVER_ERROR.getCode());
+            throw e;
+        }
         return this.getAuthenticationManager().authenticate(reissueRequestToken);
     }
 }

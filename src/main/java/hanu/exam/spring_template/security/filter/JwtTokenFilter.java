@@ -76,17 +76,17 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
             }
             catch(TokenExpiredException tee){
-                request.setAttribute("exception", ErrorCode.JWT_EXPIRED_ACCESS_TOKEN.getCode());
+                request.setAttribute("exception", ErrorCode.JWT_EXPIRED_ACCESS_TOKEN);
             }
             catch(Exception e){
-                log.error("================================================");
-                log.error("JwtTokenFilter - doFilterInternal() 오류발생");
-                log.error("token : {}", accessToken);
-                log.error("Exception Message : {}", e.getMessage());
-                log.error("Exception StackTrace : {");
-                e.printStackTrace();
-                log.error("}");
-                log.error("================================================");
+//                log.error("================================================");
+//                log.error("JwtTokenFilter - doFilterInternal() 오류발생");
+//                log.error("token : {}", accessToken);
+//                log.error("Exception Message : {}", e.getMessage());
+//                log.error("Exception StackTrace : {");
+//                e.printStackTrace();
+//                log.error("}");
+//                log.error("================================================");
                 request.setAttribute("exception", ErrorCode.UNKNOWN_SERVER_ERROR.getCode());
             } // catch
         } //if

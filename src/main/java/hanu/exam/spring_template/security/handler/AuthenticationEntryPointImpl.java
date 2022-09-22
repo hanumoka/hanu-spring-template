@@ -30,7 +30,10 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
         log.warn("AuthenticationEntryPointImpl commence");
-        String exception = (String)request.getAttribute("exception");
+
+        ErrorCode errorCode = (ErrorCode)request.getAttribute("exception");
+
+        log.warn("errorCode: {}", errorCode);
 
         // TODO: 아래에서 로그인, 토큰 재발행 요청시 오류를 구분하여 처리하자.
 
