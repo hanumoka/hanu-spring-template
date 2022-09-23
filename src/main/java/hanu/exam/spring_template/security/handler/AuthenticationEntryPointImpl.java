@@ -37,6 +37,8 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
         // TODO: 아래에서 로그인, 토큰 재발행 요청시 오류를 구분하여 처리하자.
 
+        ErrorResponse.error(response, HttpStatus.UNAUTHORIZED, errorCode, authException);
+
 //        if(exception == null) {
 //            setResponse(response, ExceptionCode.UNKNOWN_ERROR);
 //        }
@@ -56,7 +58,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 //            setResponse(response, ExceptionCode.ACCESS_DENIED);
 //        }
 
-        ErrorResponse.error(response, HttpStatus.UNAUTHORIZED, ErrorCode.JWT_EXPIRED_ACCESS_TOKEN, authException);
+
     }
 }
 
