@@ -20,7 +20,7 @@ public class InitDataInsertRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // 서버 시작시 기초 권한과 계정을 db에 저장
 
-        UserJoinDTO userJoinDTO1 = new UserJoinDTO("test1", "1234","test@test.com", "kyb");
+        UserJoinDTO userJoinDTO1 = new UserJoinDTO("test@test.com", "1234","test@test.com", "kyb");
         accountService.join(userJoinDTO1);
     }
 }
