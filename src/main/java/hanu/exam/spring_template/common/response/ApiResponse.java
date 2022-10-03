@@ -17,11 +17,20 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 @Builder
-@AllArgsConstructor
 public class ApiResponse<T> {
     private int code = ResponseCode.SUCCESS.getCode();
     private String msg = ResponseCode.SUCCESS.getMessage();
     private T result;
+
+    public ApiResponse(int code, String msg, T result) {
+        this.code = code;
+        this.msg = msg;
+        this.result = result;
+    }
+
+    public ApiResponse(T result) {
+        this.result = result;
+    }
 
     public static void accessToken(ServletResponse response, String accessToken) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();

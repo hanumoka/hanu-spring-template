@@ -77,18 +77,18 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
             catch(TokenExpiredException tee){
                 log.error("================================================");
-                log.error("JwtTokenFilter - doFilterInternal() 오류발생");
+                log.error("JwtTokenFilter -TokenExpiredException doFilterInternal() 오류발생");
                 log.error("token : {}", accessToken);
                 log.error("Exception Message : {}", tee.getMessage());
                 log.error("Exception StackTrace : {");
                 tee.printStackTrace();
                 log.error("}");
                 log.error("================================================");
-                request.setAttribute("TokenExpiredException", ErrorCode.JWT_EXPIRED_ACCESS_TOKEN);
+                request.setAttribute("exception", ErrorCode.JWT_EXPIRED_ACCESS_TOKEN);
             }
             catch(Exception e){
                 log.error("================================================");
-                log.error("JwtTokenFilter - doFilterInternal() 오류발생");
+                log.error("JwtTokenFilter -exception doFilterInternal() 오류발생");
                 log.error("token : {}", accessToken);
                 log.error("Exception Message : {}", e.getMessage());
                 log.error("Exception StackTrace : {");
