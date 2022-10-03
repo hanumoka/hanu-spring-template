@@ -23,7 +23,7 @@ public class AuthCustomDsl extends AbstractHttpConfigurer<AuthCustomDsl, HttpSec
 
         LoginFilter loginFilter = new LoginFilter(authenticationManager, objectMapper);
         // 필터 URL 설정
-        loginFilter.setFilterProcessesUrl("/api/auth/login");
+        loginFilter.setFilterProcessesUrl("/api/v1/auth/login");
         // 인증 성공 핸들러
         loginFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
         // 인증 실패 핸들러
@@ -35,7 +35,7 @@ public class AuthCustomDsl extends AbstractHttpConfigurer<AuthCustomDsl, HttpSec
 
         ReissueTokenFilter reissueTokenFilter = new ReissueTokenFilter(authenticationManager, jwtProvider);
         // 필터 URL 설정
-        reissueTokenFilter.setFilterProcessesUrl("/api/auth/reissue");
+        reissueTokenFilter.setFilterProcessesUrl("/api/v1/auth/reissue");
         // 인증 성공 핸들러
         reissueTokenFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
         // 인증 실패 핸들러
