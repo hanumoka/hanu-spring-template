@@ -22,7 +22,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     /**
      * 1.로그인 진입 실패시
      * 2.토큰 재발행 진입 실패시
-     *
+     * <p>
      * 아래 메소드 동작
      */
     @Override
@@ -31,13 +31,21 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
                          AuthenticationException authException) throws IOException {
         log.warn("AuthenticationEntryPointImpl commence");
 
-        ErrorCode errorCode = (ErrorCode)request.getAttribute("exception");
+        System.out.println("exception:" + request.getAttribute("exception"));
 
-        log.warn("errorCode: {}", errorCode);
+        ErrorCode errorCode = null;
 
-        // TODO: 아래에서 로그인, 토큰 재발행 요청시 오류를 구분하여 처리하자.
+        if (request.getAttribute("exception") != null && request.getAttribute("exception") instanceof ErrorCode) {
+            errorCode = (ErrorCode) request.getAttribute("exception");
+            log.warn("errorCode: {}", errorCode);
+        }
+
+        if(errorCode == null){
+            errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        }
 
         ErrorResponse.error(response, HttpStatus.UNAUTHORIZED, errorCode, authException);
+
 
 //        if(exception == null) {
 //            setResponse(response, ExceptionCode.UNKNOWN_ERROR);

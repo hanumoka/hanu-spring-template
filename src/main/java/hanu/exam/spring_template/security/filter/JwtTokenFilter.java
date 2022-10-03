@@ -76,20 +76,32 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
             }
             catch(TokenExpiredException tee){
-                request.setAttribute("exception", ErrorCode.JWT_EXPIRED_ACCESS_TOKEN);
+                log.error("================================================");
+                log.error("JwtTokenFilter - doFilterInternal() 오류발생");
+                log.error("token : {}", accessToken);
+                log.error("Exception Message : {}", tee.getMessage());
+                log.error("Exception StackTrace : {");
+                tee.printStackTrace();
+                log.error("}");
+                log.error("================================================");
+                request.setAttribute("TokenExpiredException", ErrorCode.JWT_EXPIRED_ACCESS_TOKEN);
             }
             catch(Exception e){
-//                log.error("================================================");
-//                log.error("JwtTokenFilter - doFilterInternal() 오류발생");
-//                log.error("token : {}", accessToken);
-//                log.error("Exception Message : {}", e.getMessage());
-//                log.error("Exception StackTrace : {");
-//                e.printStackTrace();
-//                log.error("}");
-//                log.error("================================================");
-                request.setAttribute("exception", ErrorCode.UNKNOWN_SERVER_ERROR.getCode());
+                log.error("================================================");
+                log.error("JwtTokenFilter - doFilterInternal() 오류발생");
+                log.error("token : {}", accessToken);
+                log.error("Exception Message : {}", e.getMessage());
+                log.error("Exception StackTrace : {");
+                e.printStackTrace();
+                log.error("}");
+                log.error("================================================");
+                request.setAttribute("exception", ErrorCode.UNKNOWN_SERVER_ERROR);
             } // catch
         } //if
+        else{
+            log.warn("accessToken 없음...");
+            request.setAttribute("exception", ErrorCode.JWT_NOT_EXIST_ACCESS_TOKEN);
+        }
 
         filterChain.doFilter(request, response);
     }

@@ -14,6 +14,7 @@ public enum ErrorCode {
     JWT_NOT_EXPIRED_ACCESS_TOKEN(400, "J001", "Not Expired AccessToken."),
     JWT_EXPIRED_ACCESS_TOKEN(401, "J002", "Expired AccessToken."),
     JWT_EXPIRED_REFRESH_TOKEN(401, "J003", "Expired RefreshToken."),
+    JWT_NOT_EXIST_ACCESS_TOKEN(401, "J004", "Not Exist AccessToken."),
 
     // Common
     INVALID_INPUT_VALUE(400, "C001", "Invalid Input Value"),

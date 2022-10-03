@@ -71,8 +71,6 @@ hanu:
     permit-all:
       getList:
         - /api/v1/account/test
-        - /account/test
       postList:
-        - /api/v1/account/test
 
 

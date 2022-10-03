@@ -17,10 +17,17 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    @GetMapping(name="사용자가 자신의 정보 조회", value ="/account")
+    @GetMapping(name="사용자가 자신의 정보 조회", value =MAIN_PATH + "/info")
     public ApiResponse<String> getMyAccountInfo(){
         log.info("getMyAccountInfo...");
         return new ApiResponse<String>();
     }
+
+    @GetMapping(name="사용자가 자신의 정보 조회", value =MAIN_PATH + "/test")
+    public ApiResponse<String> getTest(){
+        log.info("getTest...");
+        return new ApiResponse<String>();
+    }
+
 
 }
