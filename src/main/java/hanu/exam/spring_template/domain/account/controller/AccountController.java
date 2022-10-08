@@ -28,7 +28,7 @@ public class AccountController {
         System.out.println("username:" + authenticationFacade.getAuthUser().getUsername());
         Account account = authenticationFacade.getAuthUser();
         UserInfoDTO userInfoDTO = UserInfoDTO.builder()
-                .id(account.getId())
+                .userId(account.getId())
                 .email(account.getUsername())
                 .build();
         return new ApiResponse<UserInfoDTO>(userInfoDTO);
