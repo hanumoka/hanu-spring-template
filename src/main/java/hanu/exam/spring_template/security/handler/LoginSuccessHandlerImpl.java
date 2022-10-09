@@ -1,6 +1,6 @@
 package hanu.exam.spring_template.security.handler;
 
-import hanu.exam.spring_template.common.response.ApiResponse;
+import hanu.exam.spring_template.common.response.ComApiResponse;
 import hanu.exam.spring_template.security.token.CustomAuthResultToken;
 import hanu.exam.spring_template.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class LoginSuccessHandlerImpl implements AuthenticationSuccessHandler {
                 response);
 
         //생성된 액세스토큰은 리스폰스로 응답한다.
-        ApiResponse.accessToken(response, accessToken);
+        ComApiResponse.accessToken(response, accessToken);
     }
 
 }

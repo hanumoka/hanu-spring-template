@@ -1,7 +1,7 @@
 package hanu.exam.spring_template.security.handler;
 
 import hanu.exam.spring_template.common.response.ErrorCode;
-import hanu.exam.spring_template.common.response.ErrorResponse;
+import hanu.exam.spring_template.common.response.ComErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,7 +27,7 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
          */
         log.warn("AccessDeniedHandlerImpl handle...");
 //        ApiResponse.error(response, HttpStatus.UNAUTHORIZED, ApiResponseCode.UNAUTHORIZED_RESPONSE);
-        ErrorResponse.error(response, HttpStatus.UNAUTHORIZED, ErrorCode.METHOD_NOT_ALLOWED);
+        ComErrorResponse.error(response, HttpStatus.UNAUTHORIZED, ErrorCode.METHOD_NOT_ALLOWED);
     }
 
 }

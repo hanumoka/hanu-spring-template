@@ -1,7 +1,7 @@
 package hanu.exam.spring_template.exception;
 
 import hanu.exam.spring_template.common.response.ErrorCode;
-import hanu.exam.spring_template.common.response.ErrorResponse;
+import hanu.exam.spring_template.common.response.ComErrorResponse;
 import hanu.exam.spring_template.exception.auth.CustomAuthException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,44 +21,44 @@ import javax.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorResponse> handleException(Exception e,
-                                                            HandlerMethod handlerMethod,
-                                                            HttpServletRequest request) {
+    protected ResponseEntity<ComErrorResponse> handleException(Exception e,
+                                                               HandlerMethod handlerMethod,
+                                                               HttpServletRequest request) {
         log.error("handleException", e);
         String controllerName = handlerMethod.getMethod().getDeclaringClass().getSimpleName();
         String methodName = handlerMethod.getMethod().getName();
         String path = request.getRequestURI();
 
-        final ErrorResponse response = ErrorResponse
+        final ComErrorResponse response = ComErrorResponse
                 .of(ErrorCode.INTERNAL_SERVER_ERROR, controllerName, methodName, path);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(CustomAuthException.class)
-    protected ResponseEntity<ErrorResponse> handleCustomAuthException(CustomAuthException e,
-                                                            HandlerMethod handlerMethod,
-                                                            HttpServletRequest request) {
+    protected ResponseEntity<ComErrorResponse> handleCustomAuthException(CustomAuthException e,
+                                                                         HandlerMethod handlerMethod,
+                                                                         HttpServletRequest request) {
         log.error("handleCustomAuthException", e);
         String controllerName = handlerMethod.getMethod().getDeclaringClass().getSimpleName();
         String methodName = handlerMethod.getMethod().getName();
         String path = request.getRequestURI();
 
-        final ErrorResponse response = ErrorResponse
+        final ComErrorResponse response = ComErrorResponse
                 .of(ErrorCode.INTERNAL_SERVER_ERROR, controllerName, methodName, path);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(BusinessException.class)
-    protected ResponseEntity<ErrorResponse> handleBusinessException(final BusinessException e,
-                                                                    HandlerMethod handlerMethod,
-                                                                    HttpServletRequest request) {
+    protected ResponseEntity<ComErrorResponse> handleBusinessException(final BusinessException e,
+                                                                       HandlerMethod handlerMethod,
+                                                                       HttpServletRequest request) {
         log.warn("handleBusinessException", e);
         String controllerName = handlerMethod.getMethod().getDeclaringClass().getSimpleName();
         String methodName = handlerMethod.getMethod().getName();
         String path = request.getRequestURI();
 
         final ErrorCode errorCode = e.getErrorCode();
-        final ErrorResponse response = ErrorResponse
+        final ComErrorResponse response = ComErrorResponse
                 .of(errorCode, controllerName, methodName, path);
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
     }

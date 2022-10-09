@@ -2,7 +2,7 @@ package hanu.exam.spring_template.security.handler;
 
 
 import hanu.exam.spring_template.common.response.ErrorCode;
-import hanu.exam.spring_template.common.response.ErrorResponse;
+import hanu.exam.spring_template.common.response.ComErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -44,7 +44,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
             errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
         }
 
-        ErrorResponse.error(response, HttpStatus.UNAUTHORIZED, errorCode, authException);
+        ComErrorResponse.error(response, HttpStatus.UNAUTHORIZED, errorCode, authException);
 
 
 //        if(exception == null) {

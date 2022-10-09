@@ -23,7 +23,7 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ErrorResponse {
+public class ComErrorResponse {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
 
@@ -43,10 +43,10 @@ public class ErrorResponse {
     @JsonIgnore
     private Throwable throwable;
 
-    public static ErrorResponse of(ErrorCode errorCode
+    public static ComErrorResponse of(ErrorCode errorCode
             , String controllerName, String methodName, String path
     ) {
-        return ErrorResponse.builder()
+        return ComErrorResponse.builder()
                 .timestamp(sdf.format(System.currentTimeMillis()))
                 .code(errorCode.getCode())
                 .status(errorCode.getStatus())
@@ -58,8 +58,8 @@ public class ErrorResponse {
                 .build();
     }
 
-    public static ErrorResponse of(ErrorCode errorCode, String path) {
-        return ErrorResponse.builder()
+    public static ComErrorResponse of(ErrorCode errorCode, String path) {
+        return ComErrorResponse.builder()
                 .timestamp(sdf.format(System.currentTimeMillis()))
                 .code(errorCode.getCode())
                 .status(errorCode.getStatus())
@@ -69,8 +69,8 @@ public class ErrorResponse {
                 .build();
     }
 
-    public static ErrorResponse of(ErrorCode errorCode, String path, Throwable throwable) {
-        return ErrorResponse.builder()
+    public static ComErrorResponse of(ErrorCode errorCode, String path, Throwable throwable) {
+        return ComErrorResponse.builder()
                 .timestamp(sdf.format(System.currentTimeMillis()))
                 .code(errorCode.getCode())
                 .status(errorCode.getStatus())
@@ -81,8 +81,8 @@ public class ErrorResponse {
                 .build();
     }
 
-    public static ErrorResponse of(ErrorCode errorCode, Throwable throwable) {
-        return ErrorResponse.builder()
+    public static ComErrorResponse of(ErrorCode errorCode, Throwable throwable) {
+        return ComErrorResponse.builder()
                 .timestamp(sdf.format(System.currentTimeMillis()))
                 .code(errorCode.getCode())
                 .status(errorCode.getStatus())
@@ -101,7 +101,7 @@ public class ErrorResponse {
         httpServletResponse
                 .getWriter().
                 write(Objects.requireNonNull(
-                        objectMapper.writeValueAsString(ErrorResponse.of(errorCode, path)))
+                        objectMapper.writeValueAsString(ComErrorResponse.of(errorCode, path)))
                 );
     }
 
@@ -115,7 +115,7 @@ public class ErrorResponse {
         httpServletResponse
                 .getWriter().
                 write(Objects.requireNonNull(
-                        objectMapper.writeValueAsString(ErrorResponse.of(errorCode, "")))
+                        objectMapper.writeValueAsString(ComErrorResponse.of(errorCode, "")))
                 );
     }
 
@@ -130,7 +130,7 @@ public class ErrorResponse {
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setStatus(httpStatus.value());
         httpServletResponse.getWriter().write(
-                Objects.requireNonNull(objectMapper.writeValueAsString(ErrorResponse.of(errorCode, throwable))));
+                Objects.requireNonNull(objectMapper.writeValueAsString(ComErrorResponse.of(errorCode, throwable))));
     }
 
 

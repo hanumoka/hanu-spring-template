@@ -1,7 +1,7 @@
 package hanu.exam.spring_template.security.handler;
 
 import hanu.exam.spring_template.common.response.ErrorCode;
-import hanu.exam.spring_template.common.response.ErrorResponse;
+import hanu.exam.spring_template.common.response.ComErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -25,7 +25,7 @@ public class LoginFailureHandlerImpl implements AuthenticationFailureHandler {
         //TODO: 아이디, 패스워드를 다시 확인하라는 메시지 추가
         log.warn("LoginFailureHandlerImpl onAuthenticationFailure");
 //        ApiResponse.error(response, HttpStatus.UNAUTHORIZED, ApiResponseCode.UNAUTHORIZED_RESPONSE);
-        ErrorResponse.error(response, HttpStatus.UNAUTHORIZED, ErrorCode.LOGIN_INPUT_INVALID);
+        ComErrorResponse.error(response, HttpStatus.UNAUTHORIZED, ErrorCode.LOGIN_INPUT_INVALID);
     }
 
 }
