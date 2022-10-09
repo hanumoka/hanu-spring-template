@@ -35,10 +35,8 @@ import static hanu.exam.spring_template.security.AuthCustomDsl.customDsl;
 public class SecurityConfig {
 
     private final SecurityPermitAllConfig securityPermitAllConfig;
-
     // JWT 제공 클래스
     private final JwtProvider jwtProvider;
-
     // 인증 실패 또는 인증헤더가 전달받지 못했을때 핸들러
     private final AuthenticationEntryPoint authenticationEntryPoint;
     // 인증 성공 핸들러
@@ -48,6 +46,20 @@ public class SecurityConfig {
     // 인가 실패 핸들러
     private final AccessDeniedHandler accessDeniedHandler;
     private final ObjectMapper objectMapper;
+
+    private static final String[] PERMIT_URL_ARRAY = {
+            /* swagger v2 */
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            /* swagger v3 */
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+    };
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
@@ -59,15 +71,18 @@ public class SecurityConfig {
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/h2-console/**");
+        return (web) -> web.ignoring()
+                .antMatchers(
+                        "/h2-console/**"
+                        ,"/swagger-ui/**"
+                        ,"/v3/api-docs/**"
+                );
     }
 
     @Bean
     public JwtTokenFilter customJwtTokenFilter() {
         return new JwtTokenFilter(jwtProvider);
     }
-
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -78,15 +93,17 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
         ;
+
 
         // 특정 도메인 security 허용
         http.authorizeRequests()
+                .antMatchers(PERMIT_URL_ARRAY).permitAll()
                 .antMatchers(HttpMethod.GET,
                         securityPermitAllConfig.getGetList().toArray(new String[0])).permitAll()
                 .antMatchers(HttpMethod.POST,
                         securityPermitAllConfig.getPostList().toArray(new String[0])).permitAll()
+                .anyRequest().permitAll()
         ;
 
 
@@ -95,10 +112,6 @@ public class SecurityConfig {
                 .authenticationEntryPoint(authenticationEntryPoint) // 인증실패 처리(401처리)
                 .accessDeniedHandler(accessDeniedHandler) // 인가실패 처리(403처리)
         ;
-
-        // 기본적으로 모든 URL에 대한 권한검증 처리
-        http.authorizeRequests()
-                .anyRequest().authenticated();
 
         //security에 /login 인증 필터 연동
         http.apply(customDsl(loginSuccessHandler, loginFailureHandler, objectMapper, jwtProvider));

@@ -1,4 +1,7 @@
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher # swagger 설정?
   h2:
     console:
       enabled: true
@@ -57,6 +60,11 @@ decorator:
     p6spy:
       enable-logging: true
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
 hanu:
   jwt:
     authorization-header: Authorization
@@ -71,6 +79,7 @@ hanu:
     permit-all:
       getList:
         - /api/v1/account/test
+        - /api/test/**
       postList:
 
 

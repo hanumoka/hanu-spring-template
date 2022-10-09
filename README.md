@@ -16,3 +16,10 @@ springboot + jpa + h2 + security + jwt + 통합테스트 템플릿 예제 프로
 - log.debug : 개발시 디버깅용
 
 개발시에는 debug까지 활용이 가능하다. 하지만 운영시에는 info, warn, error만 기록한다.
+
+
+# TODO
+- 스웨거 적용(엔드포인트 테스트 목적)
+- restdocs 적용 (api 도큐먼트 자동생성 목적)
+- 로그인 관련 테스트 코드 작성
+- 엔티티 설계
